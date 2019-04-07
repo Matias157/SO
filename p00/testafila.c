@@ -120,6 +120,7 @@ int main (int argc, char **argv, char **envp)
    fila0 = NULL ;
    for (i=0; i<N; i++)
    {
+      //printf("%d\n", i);
       assert (queue_size ((queue_t*) fila0) == i) ;
       queue_append ((queue_t **) &fila0, (queue_t*) &item[i]) ;
       assert (fila_correta (fila0)) ;
