@@ -1,0 +1,35 @@
+Microsoft Windows (ou simplesmente Windows) é uma família de sistemas operacionais desenvolvidos, comercializados e vendidos pela Microsoft. É constituída por várias famílias de sistemas operacionais, cada qual atendendo a um determinado setor da indústria da computação, sendo que o sistema geralmente é associado com a arquitetura IBM PC compatível. As famílias ativas do Windows incluem Windows NT, Windows Embedded e Windows Phone; estes podem abranger subfamílias, como Windows CE ou Windows Server.
+A Microsoft introduziu um ambiente operacional chamado Windows em 20 de novembro de 1985, como um shell para MS-DOS, em resposta ao crescente interesse em interfaces gráficas de usuário (GUIs).
+
+Embora seja tratado como sistema operacional o Windows (versões 3.xx, 95, 98, 2000) não é um sistema operacional e sim uma interface gráfica que trabalha sobre o DOS. O Windows NT sim , este é um sistema operacional com todas as características de gerenciamento.
+
+o Windows é um sistema operacional desktop (“de mesa”), ou seja, ele é voltado ao atendimento do usuário doméstico e corporativo para a realização de atividades corriqueiras, como edição de textos e gráficos, navegação na Internet e reprodução de mídia. Suas principais características são a interface gráfica, o suporte à interatividade e a operação em rede. 
+
+O Windows é Gráfico: Significa que ele é baseado em imagens, e não em textos, os comandos não são dados pelo teclado, decorando-se palavras chaves e linguagens de comando, como era feito na época do DOS, utilizamos o mouse para “clicar” nos locais que desejamos.
+O Windows é Multitarefa Preemptiva: Ser Multitarefa significa que ele possui a capacidade de executar várias tarefas ao mesmo tempo, graças a uma utilização inteligente dos recursos do Microprocessador. A característica “preemptiva” significa que as operações não acontecem exatamente ao mesmo tempo, mas cada programa requisita seu direito de executar uma tarefa, cabendo ao Windows decidir se autoriza ou não. Ou seja, o Windows gerencia o tempo de utilização do processador, dividindo-o, inteligentemente, entre os programas.
+O Windows é Multiusuário. Um recurso disponível em diversas versões Windows e apresenta as características onde podemos tem um computador disponível para várias pessoas cada um com suas configurações, arquivos e particularidades.
+
+O windows, em suas primeiras versões, era monolítico. Ser monolítico significa que o sistema operacional é um “bloco maciço” de código que opera em modo núcleo, com acesso a todos os recursos do hardware e sem restrições de acesso à memória.
+
+A Windows API, informalmente WinAPI, é um conjunto base de interfaces de programação (API) para o sistema operativo Microsoft Windows. Era anteriormente chamado Win32 API.
+Uma API é definida pelo conjunto de chamadas de sistema oferecidas por um núcleo.
+
+As primeiras versões do Windows NT podiam ser consideradas micronúcleo, mas a partir da versão 4 vários subsistemas foram movidos para dentro do núcleo para melhorar seu desempenho, transformando-o em um núcleo híbrido.
+
+O Windows NT  implementa uma camada inferior de abstração do hardware para interagir com os dispositivos (a camada HAL – Hardware Abstraction Layer, implementada no sistema e seus sucessores), e também organizam em camadas alguns subsistemas, como a gerência de arquivos e o suporte de rede (seguindo o modelo OSI)
+
+O Windows NT segue o Modelo de Threads 1:1 no qual cada thread do processo mapeado em uma thread de núcleo.
+
+No entanto, em 2014, a Microsoft admitiu a perda da maioria do mercado global de sistemas operacionais do sistema operacional móvel Android, devido ao enorme crescimento nas vendas de smartphones. Em 2014, o número de dispositivos Windows vendidos era menos de 25% dos dispositivos Android vendidos. Essas comparações, no entanto, podem não ser totalmente relevantes, já que os dois sistemas operacionais visam plataformas tradicionalmente diferentes.
+
+Referências:
+https://pt.wikipedia.org/wiki/Microsoft_Windows
+http://www.inf.ufsc.br/~j.barreto/cca/sisop/sisoperac.html
+http://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-livro.pdf
+https://concurseria.com.br/wp-content/uploads/2018/01/windows.pdf
+https://pt.wikipedia.org/wiki/API_do_Windows
+http://gs.statcounter.com/os-market-share/desktop/worldwide/
+
+Link do vídeo:
+https://www.youtube.com/watch?v=UFpFoB1XS2w
+

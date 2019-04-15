@@ -1,0 +1,16 @@
+Microsoft Windows (ou simplesmente Windows) é uma família de sistemas operacionais desenvolvidos, comercializados e vendidos pela Microsoft. É constituída por várias famílias de sistemas operacionais, cada qual atendendo a um determinado setor da indústria da computação, sendo que o sistema geralmente é associado com a arquitetura IBM PC compatível. As famílias ativas do Windows incluem Windows NT, Windows Embedded e Windows Phone; estes podem abranger subfamílias, como Windows CE ou Windows Server.
+
+A Microsoft introduziu um ambiente operacional chamado Windows em 20 de novembro de 1985, como um shell para MS-DOS, em resposta ao crescente interesse em interfaces gráficas de usuário (GUIs).
+
+Multitarefa (Multiprogramável) - sistema que permite o funcionamento de vários programas, além de compartilhamento e gerenciamento de recursos, apresentando uma estrutura complexa. Ex.: Windows.
+
+Windows: sistema operacional em janelas
+A palavra Windows traduzida do inglês quer dizer 'janelas', um gerenciador de interfaces que permite o usuário ver informações e se comunicar com o computador. Ele foi desenvolvido, na década de 1980, por Bill Gates, mas somente se tornou um sistema operacional a partir do Windows NT, lançado na década de 90. A partir da primeira interface, foram surgindo outras versões para Windows, como 1.01, 2.03, 2.1, 3.0, etc.
+
+O Windows NT (New Tecnology) foi desenvolvido para o ambiente corporativo. Ele é multiusuário, monolítico (em um sistema monolítico, o sistema operacional é um “bloco maciço” de código que opera em modo núcleo, com acesso a todos os recursos do hardware e sem restrições de acesso à memória), multitarefa e multiplataforma, rodando não somente em plataformas como INTEL, mas em DEC Alpha, MIPS, etc. Uma das características dos NT é a de se transformar em servidor na internet, sendo dividido em Windows NT Server e Windows NT Workstation.
+
+Anteriormente, não havia ainda o Windows, mas softwares que 'rodavam' no computador e eram sistemas gráficos com versões compatíveis ao sistema DOS (MS-DOS, DR-DOS, PC-DOS), sendo utilizado e criado pela Microsoft, o MS-DOS (sistema orientado por meio de linhas de comando digitadas através do teclado pelo o utilizador).
+
+
+
+

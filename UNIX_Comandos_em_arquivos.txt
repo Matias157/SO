@@ -1,0 +1,138 @@
+1. Como procurar por uma palavra no manual (man)?
+	man -K "palavra" #onde 'palavra' é a palavra a ser procurada 
+
+2. Liste todos os arquivos do seu diretório HOME.
+	ls
+
+3. Como você pode saber em qual diretório você está no sistema?
+	pwd
+
+4. Qual o comando para saber qual a conta que está sendo usada em um SHELL?
+	whoami
+
+5. Liste o nome do grupo de usuários ao qual sua conta pertence.
+	groups
+
+6. Visite alguns diretórios, alternando os comandos pwd e cd. Os diretórios são os seguintes:
+  /home/espinf
+  o predecessor do diretório /home/espinf
+  /
+  /usr
+  /tmp
+  /usr/bin
+  seu diretório HOME 
+
+$ cd /home/espinf
+$ pwd
+/home/esfinf
+$ cd ..
+$ pwd
+/home
+$ cd /
+$ pwd
+/
+$ cd usr
+$ pwd
+/usr
+$ cd ../tmp
+$ pwd
+/tmp
+$ cd /usr/bin
+$ pwd
+/usr/bin
+$ cd ~
+$ pwd
+/home/giuliana
+
+
+7. Liste o conteúdo dos diretórios acima, ordenados por data, de duas formas:
+a. sem sair do seu diretório HOME
+	$ ls -t /home/espinf
+	$ ls -t /home/espinf/..
+	$ ls -t /usr
+	$ ls -t /tmp
+	$ ls -t /usr/bin
+	$ ls -t ~
+b. acessando primeiramente o diretório a ser listado
+	$ cd /home/espinf
+	$ ls -t
+	$ cd ..
+	$ ls -t
+	$ cd /
+	$ ls -t
+	$ cd usr
+	$ ls -t
+	$ cd ../tmp
+	$ ls -t
+	$ cd /usr/bin
+	$ ls -t
+	$ cd ~
+	$ ls -t
+
+8. O que faz a opção -a no comando ls? E a opção -l?
+	$ ls -a # lista todos os arquivos da pasta atual, inclusive os que começam com .
+	$ ls -l # lista algumas propriedades dos arquivos como permissões, data de modificação, etc.
+
+9. Liste usuários do sistema com o mesmo nome que o seu
+	$ cat /etc/passwd | cut -d: -f1 | grep giuliana 
+	O comando cat /etc/passwd lista todos os usuários do sistema. O comando cut -d: -f1 restringe o resultado do comando anterior somente a primeira coluna. O comando grep giuliana procura todos os nomes de usuário que sejam iguais a "giuliana". O | é um artifício do sistema operacional que redireciona a saída de um comando para outro comando.
+
+10. O que são arquivos/diretórios cujo nome inicia com um caractere . ?
+	São arquivos ocultos do sistema, ou seja, por padrão eles não aparecem explicitamente nos diretórios.
+
+11. Crie um link simbólico para o diretório infraComp do seu colega ao lado. Use este link para listar o conteúdo do diretório
+	$ ln -s /home/colega/infraComp
+	$ ls infraComp
+
+12. O que fazem os comandos du e df?
+	$ du arquivo_ou_diretorio # estima o espaço ocupado por um arquivo ou diretório
+	$ df # reporta o espaço usado no disco pelos arquivos do sistema
+
+13. O comando ls permite obter listagens de diretórios sob várias formas. Consulte a página de manual do comando e execute-o de forma a obter listagens da seguinte forma:
+- listagem longa do diretório home, com detalhes. O que significa cada coluna da listagem?
+	$ ls -l # coluna 1: mostra as premissões do arquivo
+			# coluna 2: mostra o número de hard links
+			# coluna 3: mostra o dono do arquivo
+			# coluna 4: mostra o grupo que tem posse do arquivo
+			# coluna 5: mostra o número em byte qdo tamanho do arquivo
+			# coluna 6, 7 e 8: mostra a data e horário da última modificação
+			# coluna 9: mostra o nome do arquivo		 
+- listagem curta do diretório home, incluindo os arquivos escondidos.
+	$ ls -a
+
+- listagem longa de /var/spool/mail, ordenada por tamanho dos arquivos
+	$ ls -lS /var/spool/mail
+
+- listagem longa de /etc, ordenada alfabeticamente
+	$ ls -l /etc
+
+- listagem longa de /home, ordenada por datas crescentes
+	$ ls -lt /home
+
+- listagem curta de /usr, recursiva e ordenada por tamanho
+	$ lls -RS /usr
+
+14. O comando mkdir permite criar diretórios com subdiretórios. Leia sua página de manual e execute-o para criar a seguinte estrutura de diretórios (dentro de seu diretório home), usando apenas uma operação. Use o comando tree para conferir a estrutura criada:
+      a
+      `-- b
+          |-- c
+          |   |-- d
+          |   |   `-- h
+          |   |
+          |   `-- e
+          |
+          |-- f
+          |   `-- d
+          |
+          `-- j
+	$ mkdir -p a/b/{c/{d/h,e},f/d,j}
+
+15. Crie um arquivo .tar, com o conteúdo do seu diretório HOME. A seguir, compacte-o usando os comando compress, gzip e bzip2, e compare os resultados (tamanho).
+	$ tar cvf giuliana.tar /home/giuliana
+	$ cp giuliana.tar ./giuliana2.tar
+	$ compress giuliana2.tar
+	$ tar czvf giuliana2.tar.gz giuliana.tar
+	$ tar czvf giuliana2.tar.bz2 giuliana.tar
+	Observa-se que os arquivos compactados com gzip e bzip2 resultaram em arquivos do mesmo tamanho, enquanto usando "compress" o arquivo ficou maior que os outros dois.
+	
+

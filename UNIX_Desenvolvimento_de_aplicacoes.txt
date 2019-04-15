@@ -1,0 +1,177 @@
+1. Escreva e compile o arquivo pi.c (cálculo de Pi através da série de Gregory) usando compilação estática e dinâmica. Compare o tamanho final dos executáveis e os símbolos internos de cada executável (comando nm).
+	Foi observado que, quando o código é compilado estaticamente, o tamanho do arquivo de execução fica maior, mas o tempo de execução menor. O inverso acontece quando o arquivo é compilado dinamicamente.
+	
+2. Construa uma biblioteca de operações aritméticas entre pares de inteiros, que implemente as operações abaixo indicadas. Devem ser gerados o arquivo fonte (.c), de cabeçalho (.h), a biblioteca estática (.a) e a biblioteca dinâmica (.so).
+int soma (int, int)
+int subt (int, int)
+int mult (int, int)
+int divi (int, int)
+
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ gcc -c calc.c
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ar rvs bibliotecacalc.a calc.o
+ar: creating bibliotecacalc.a
+a - calc.o
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ar t bibliotecacalc.a 
+calc.o
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ gcc -fPIC -c calc.c
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ~> gcc -g -shared -Wl,-soname,libtest.so.0 -o libtest.so.0.0 file1.o file2.o file3.o
+bash: /home/giuliana: Is a directory
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ~> gcc -g -shared -Wl,-soname,libtest.so.0 -o libtest.so.0.0 calc.o
+bash: /home/giuliana: Is a directory
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ls
+bibliotecacalc.a  p10
+calc.c            p11
+calc.h            p12
+calc.o            p13
+gcc               p14
+__MACOSX          ping-pong-os-intro-20150824.pdf
+p00               regras_das_atividades_de_laboratorio-20171129.pdf
+p01               relatorio.tgz
+p02               RespostasUnix.txt
+p03               script so
+p04               socm-livro.pdf
+p05               TextoWindows
+p06               UNIX_Comandos_em_arquivos.sh
+p07               UNIX_Desenvolvimento_de_aplicacoes.txt
+p08               UNIX_Permissões_de_acesso.txt
+p09
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ gcc -g -shared -Wl,-soname,libtest.so.0 -o libtest.so.0.0 calc.o
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ls
+bibliotecacalc.a  p04  ping-pong-os-intro-20150824.pdf
+calc.c            p05  regras_das_atividades_de_laboratorio-20171129.pdf
+calc.h            p06  relatorio.tgz
+calc.o            p07  RespostasUnix.txt
+gcc               p08  script so
+libtest.so.0.0    p09  socm-livro.pdf
+__MACOSX          p10  TextoWindows
+p00               p11  UNIX_Comandos_em_arquivos.sh
+p01               p12  UNIX_Desenvolvimento_de_aplicacoes.txt
+p02               p13  UNIX_Permissões_de_acesso.txt
+p03               p14
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ mv libtest.so.0.0 /usr/local/lib
+mv: cannot move 'libtest.so.0.0' to '/usr/local/lib/libtest.so.0.0': Permission denied
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ sudo mv libtest.so.0.0 /usr/local/lib
+[sudo] password for giuliana: 
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ln -s libtest.so.0.0 libtest.so.0
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ln -s libtest.so.0 libtest.so
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ls -l /usr/local/lib
+total 156488
+drwxr-xr-x  3 root     root         4096 Set 19  2018 gcc
+drwxr-xr-x  8 root     root         4096 Set 22  2018 ghdl
+-rwxr-xr-x  1 root     root        13160 Set 22  2018 libghdlvpi.so
+-rw-r--r--  1 root     root      1011172 Mar 15 14:34 libikvm-native.a
+-rwxr-xr-x  1 root     root         1004 Mar 15 14:34 libikvm-native.la
+-rwxr-xr-x  1 root     root       606136 Mar 15 14:34 libikvm-native.so
+lrwxrwxrwx  1 root     root           17 Mar 15 14:34 libmono-2.0.a -> libmonosgen-2.0.a
+lrwxrwxrwx  1 root     root           18 Mar 15 14:34 libmono-2.0.la -> libmonosgen-2.0.la
+lrwxrwxrwx  1 root     root           18 Mar 15 14:34 libmono-2.0.so -> libmonosgen-2.0.so
+lrwxrwxrwx  1 root     root           20 Mar 15 14:34 libmono-2.0.so.1 -> libmonosgen-2.0.so.1
+lrwxrwxrwx  1 root     root           24 Mar 15 14:34 libmono-2.0.so.1.0.0 -> libmonosgen-2.0.so.1.0.0
+-rw-r--r--  1 root     root     46610558 Mar 15 14:34 libmonoboehm-2.0.a
+-rwxr-xr-x  1 root     root         1028 Mar 15 14:34 libmonoboehm-2.0.la
+lrwxrwxrwx  1 root     root           25 Mar 15 14:34 libmonoboehm-2.0.so -> libmonoboehm-2.0.so.1.0.0
+lrwxrwxrwx  1 root     root           25 Mar 15 14:34 libmonoboehm-2.0.so.1 -> libmonoboehm-2.0.so.1.0.0
+-rwxr-xr-x  1 root     root     20509544 Mar 15 14:34 libmonoboehm-2.0.so.1.0.0
+-rwxr-xr-x  1 root     root      4209416 Mar 15 14:34 libmono-btls-shared.so
+-rw-r--r--  1 root     root      1759448 Mar 15 14:34 libMonoPosixHelper.a
+-rwxr-xr-x  1 root     root         1036 Mar 15 14:34 libMonoPosixHelper.la
+-rwxr-xr-x  1 root     root      1040264 Mar 15 14:34 libMonoPosixHelper.so
+-rw-r--r--  1 root     root       939310 Mar 15 14:34 libmono-profiler-aot.a
+-rwxr-xr-x  1 root     root         1056 Mar 15 14:34 libmono-profiler-aot.la
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-aot.so -> libmono-profiler-aot.so.0.0.0
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-aot.so.0 -> libmono-profiler-aot.so.0.0.0
+-rwxr-xr-x  1 root     root       557384 Mar 15 14:34 libmono-profiler-aot.so.0.0.0
+-rw-r--r--  1 root     root        93104 Mar 15 14:34 libmono-profiler-aot-static.a
+-rwxr-xr-x  1 root     root          973 Mar 15 14:34 libmono-profiler-aot-static.la
+-rw-r--r--  1 root     root      1005164 Mar 15 14:34 libmono-profiler-coverage.a
+-rwxr-xr-x  1 root     root         1091 Mar 15 14:34 libmono-profiler-coverage.la
+lrwxrwxrwx  1 root     root           34 Mar 15 14:34 libmono-profiler-coverage.so -> libmono-profiler-coverage.so.0.0.0
+lrwxrwxrwx  1 root     root           34 Mar 15 14:34 libmono-profiler-coverage.so.0 -> libmono-profiler-coverage.so.0.0.0
+-rwxr-xr-x  1 root     root       596032 Mar 15 14:34 libmono-profiler-coverage.so.0.0.0
+-rw-r--r--  1 root     root       158956 Mar 15 14:34 libmono-profiler-coverage-static.a
+-rwxr-xr-x  1 root     root          988 Mar 15 14:34 libmono-profiler-coverage-static.la
+-rw-r--r--  1 root     root      1492192 Mar 15 14:34 libmono-profiler-log.a
+-rwxr-xr-x  1 root     root         1060 Mar 15 14:34 libmono-profiler-log.la
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-log.so -> libmono-profiler-log.so.0.0.0
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-log.so.0 -> libmono-profiler-log.so.0.0.0
+-rwxr-xr-x  1 root     root       882448 Mar 15 14:34 libmono-profiler-log.so.0.0.0
+-rw-r--r--  1 root     root       645986 Mar 15 14:34 libmono-profiler-log-static.a
+-rwxr-xr-x  1 root     root          973 Mar 15 14:34 libmono-profiler-log-static.la
+-rw-r--r--  1 root     root     52873716 Mar 15 14:34 libmonosgen-2.0.a
+-rwxr-xr-x  1 root     root         1021 Mar 15 14:34 libmonosgen-2.0.la
+lrwxrwxrwx  1 root     root           24 Mar 15 14:34 libmonosgen-2.0.so -> libmonosgen-2.0.so.1.0.0
+lrwxrwxrwx  1 root     root           24 Mar 15 14:34 libmonosgen-2.0.so.1 -> libmonosgen-2.0.so.1.0.0
+-rwxr-xr-x  1 root     root     22916416 Mar 15 14:34 libmonosgen-2.0.so.1.0.0
+-rw-r--r--  1 root     root       880352 Mar 15 14:34 libMonoSupportW.a
+-rwxr-xr-x  1 root     root         1011 Mar 15 14:34 libMonoSupportW.la
+-rwxr-xr-x  1 root     root       522512 Mar 15 14:34 libMonoSupportW.so
+-rw-r--r--  1 root     root       539840 Mar 15 14:34 libmono-system-native.a
+-rwxr-xr-x  1 root     root         1063 Mar 15 14:34 libmono-system-native.la
+lrwxrwxrwx  1 root     root           30 Mar 15 14:34 libmono-system-native.so -> libmono-system-native.so.0.0.0
+lrwxrwxrwx  1 root     root           30 Mar 15 14:34 libmono-system-native.so.0 -> libmono-system-native.so.0.0.0
+-rwxr-xr-x  1 root     root       246072 Mar 15 14:34 libmono-system-native.so.0.0.0
+-rwxrwxr-x  1 giuliana giuliana     7960 Abr 14 18:33 libtest.so.0.0
+drwxr-xr-x 23 root     root         4096 Mar 15 14:34 mono
+drwxr-xr-x  3 root     root         4096 Mar 15 14:34 monodoc
+drwxr-xr-x  2 root     root         4096 Mar 15 14:34 mono-source-libs
+drwxr-xr-x  2 root     root         4096 Mar 15 14:34 pkgconfig
+drwxrwsr-x  4 root     staff        4096 Nov 15 12:04 python2.7
+drwxrwsr-x  3 root     staff        4096 Ago  1  2017 python3.5
+drwxr-xr-x  2 root     root         4096 Mai 28  2018 warsaw
+
+	 
+3. Construa um pequeno programa que use a biblioteca do exercício anterior, ligando-a (a) estaticamente e (b) dinamicamente com seu código.
+	gcc -o calculadora calculadora.c -L. -ltest
+	gcc -static calculadora.c -o calculadora -L. -ltest	
+
+4. Efetue a execução passo-a-passo do programa escrito na questão anterior, usando o ddd ou diretamente o gdb.
+
+
+5. Faça o profiling do programa escrito na questão 3, usando o gprof.
+$ gprof calculadora gmon.out
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+6. Identifique todos os arquivos abertos durante a execução do comando de sistema uptime.
+$ uptime
+ 19:05:52 up  7:18,  1 user,  load average: 1,10, 1,23, 1,27
+

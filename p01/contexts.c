@@ -4,7 +4,7 @@
 
 // operating system check
 #if defined(_WIN32) || (!defined(__unix__) && !defined(__unix) && (!defined(__APPLE__) || !defined(__MACH__)))
-#warning Este codigo foi planejado para ambientes UNIX (LInux, *BSD, MacOS). A compilacao e execucao em outros ambientes e responsabilidade do usuario.
+#warning Este codigo foi planejado para ambientes UNIX (Linux, *BSD, MacOS). A compilacao e execucao em outros ambientes e responsabilidade do usuario.
 #endif
 
 #define STACKSIZE 32768		/* tamanho de pilha das threads */
@@ -23,7 +23,8 @@ void BodyPing (void * arg)
    for (i=0; i<4; i++)
    {
       printf ("%s %d\n", (char *) arg, i) ;
-      swapcontext (&ContextPing, &ContextPong);
+      getcontext(&ContextPing);
+      setcontext(&ContextPong);
    }	
    printf ("%s FIM\n", (char *) arg) ;
 
@@ -41,7 +42,8 @@ void BodyPong (void * arg)
    for (i=0; i<4; i++)
    {
       printf ("%s %d\n", (char *) arg, i) ;
-      swapcontext (&ContextPong, &ContextPing);
+      getcontext(&ContextPong);
+      setcontext(&ContextPing);
    }
    printf ("%s FIM\n", (char *) arg) ;
 
@@ -93,6 +95,7 @@ int main (int argc, char *argv[])
    makecontext (&ContextPong, (void*)(*BodyPong), 1, "        Pong");
 
    swapcontext (&ContextMain, &ContextPing);
+   printf ("aqui\n") ;
    swapcontext (&ContextMain, &ContextPong);
 
    printf ("Main FIM\n");

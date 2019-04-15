@@ -1,0 +1,72 @@
+1. Crie a seguinte estrutura de diretórios na sua area HOME:
+~/infraComp/aula01
+       |__ /aula02
+                |__ /exercicios
+       |__ /aula03
+       |__ /aula04
+       |__ /aula05
+	$ mkdir -p infraComp/{aula01,aula02/exercicios,aula03,aula04,aula05}
+
+2. Em cada diretório acima crie um arquivo chamado DATA, utilizando o comando touch.
+	$ cd infraComp
+	$ touch DATA
+	$ cd aula01
+	$ touch DATA
+	$ cd ../aula02
+	$ touch DATA
+	$ cd exercicios
+	$ touch DATA
+	$ cd ../../aula03
+	$ touch DATA
+	$ cd ../aula04
+	$ touch DATA
+
+3. Altere as permissões de acesso de seu diretório HOME para que somente você e os usuários do seu grupo tenham acesso de leitura e execução, e você tenha acesso de leitura, escrita e execução.
+	$ chmod 750 /home/giuliana
+
+4. Crie um diretório $HOME/mydir e ajuste suas permissões de forma que seus colegas consigam criar um arquivo nele. Crie um arquivo com seu nome no diretório correspondente do seu vizinho.
+	$ cd /home	
+	$ mkdir mydir
+	$ chmod g+w mydir
+	$ cd mydir
+	$ touch giuliana
+
+5. Qual a diferença no resultado da execução dos dois comandos abaixo?
+cp teste teste.bak # cria uma cópia de teste e o nomeia de teste.bak
+mv teste teste.bak # renomeia o arquivo teste para teste.bak
+
+6. Qual a diferença entre executar e ler um diretório (permissões r e x)?
+	Ao executar é possível entrar no diretório e ao ler é possível ver os arquivos e diretórios que estão dentro dele.
+
+7. Qual a diferença entre executar e ler um arquivo (permissões r e x)?
+	Ao executar o processador roda o arquivo, ao ler é possível ler o conteúdo do arquivo.
+
+8. Você conseguiria mudar o nome de seu próprio diretório home ? Por que ?
+	Conseguiria mas entraria em conflito com o nome de usuário.
+
+9. Crie um arquivo teste com os direitos de acesso rw-rw-rw-, e indique como usar o comando chmod para alterar seus direitos de acesso para:
+a. rw-rw-r--
+	$ chmod o-w teste
+b. r-xr-xr-x
+	$ chmod 555 teste
+c. rw-r--r--
+	$ chmod go-w teste
+d. r——--
+	$ chmod 400 teste
+
+10. Execute o comando umask para que novos arquivos criados no sistema tenham as permissões de acesso definidas a seguir, e teste as máscaras definidas criando novos arquivos (comando touch) e diretórios (comando mkdir). Finalmente, explique por que razão as permissões dos arquivos não coincidem com as esperadas, mas as dos diretórios sim.
+a. rw-rw-r--
+	$ umask 664
+b. r-xr-xr-x
+	$ umask 555
+c. rw-r--r--
+	$ umask 644
+d. r——--
+	$ umask 400
+	As permissões para os arquivos são diferentes porque, por padrão, as permissões de execução não são atribuídas aos arquivos. O sistema deixa isso a cargo do usuário.
+
+
+11. Crie dois diretórios d1 e d2, com permissões respectivas r--r--r-- e r-xr-xr-x, e compare as possibilidades de acesso em ambos. É possível listar o conteúdo de ambos, estando fora deles ? É possível entrar em ambos ?
+	Não é possível entrar no diretório d1 e é possível entrar no diretório d2. E possível listar o diretório d1, mas há um aviso de que não é possível acessar os arquivos, e é possível listar o diretório d2.
+
+

@@ -1,0 +1,391 @@
+UNIX - Comandos em arquivos
+
+1. Como procurar por uma palavra no manual (man)?
+	man -K "palavra" #onde 'palavra' é a palavra a ser procurada 
+
+2. Liste todos os arquivos do seu diretório HOME.
+	ls
+
+3. Como você pode saber em qual diretório você está no sistema?
+	pwd
+
+4. Qual o comando para saber qual a conta que está sendo usada em um SHELL?
+	whoami
+
+5. Liste o nome do grupo de usuários ao qual sua conta pertence.
+	groups
+
+6. Visite alguns diretórios, alternando os comandos pwd e cd. Os diretórios são os seguintes:
+  /home/espinf
+  o predecessor do diretório /home/espinf
+  /
+  /usr
+  /tmp
+  /usr/bin
+  seu diretório HOME 
+
+$ cd /home/espinf
+$ pwd
+/home/esfinf
+$ cd ..
+$ pwd
+/home
+$ cd /
+$ pwd
+/
+$ cd usr
+$ pwd
+/usr
+$ cd ../tmp
+$ pwd
+/tmp
+$ cd /usr/bin
+$ pwd
+/usr/bin
+$ cd ~
+$ pwd
+/home/giuliana
+
+
+7. Liste o conteúdo dos diretórios acima, ordenados por data, de duas formas:
+a. sem sair do seu diretório HOME
+	$ ls -t /home/espinf
+	$ ls -t /home/espinf/..
+	$ ls -t /usr
+	$ ls -t /tmp
+	$ ls -t /usr/bin
+	$ ls -t ~
+b. acessando primeiramente o diretório a ser listado
+	$ cd /home/espinf
+	$ ls -t
+	$ cd ..
+	$ ls -t
+	$ cd /
+	$ ls -t
+	$ cd usr
+	$ ls -t
+	$ cd ../tmp
+	$ ls -t
+	$ cd /usr/bin
+	$ ls -t
+	$ cd ~
+	$ ls -t
+
+8. O que faz a opção -a no comando ls? E a opção -l?
+	$ ls -a # lista todos os arquivos da pasta atual, inclusive os que começam com .
+	$ ls -l # lista algumas propriedades dos arquivos como permissões, data de modificação, etc.
+
+9. Liste usuários do sistema com o mesmo nome que o seu
+	$ cat /etc/passwd | cut -d: -f1 | grep giuliana 
+	O comando cat /etc/passwd lista todos os usuários do sistema. O comando cut -d: -f1 restringe o resultado do comando anterior somente a primeira coluna. O comando grep giuliana procura todos os nomes de usuário que sejam iguais a "giuliana". O | é um artifício do sistema operacional que redireciona a saída de um comando para outro comando.
+
+10. O que são arquivos/diretórios cujo nome inicia com um caractere . ?
+	São arquivos ocultos do sistema, ou seja, por padrão eles não aparecem explicitamente nos diretórios.
+
+11. Crie um link simbólico para o diretório infraComp do seu colega ao lado. Use este link para listar o conteúdo do diretório
+	$ ln -s /home/colega/infraComp
+	$ ls infraComp
+
+12. O que fazem os comandos du e df?
+	$ du arquivo_ou_diretorio # estima o espaço ocupado por um arquivo ou diretório
+	$ df # reporta o espaço usado no disco pelos arquivos do sistema
+
+13. O comando ls permite obter listagens de diretórios sob várias formas. Consulte a página de manual do comando e execute-o de forma a obter listagens da seguinte forma:
+- listagem longa do diretório home, com detalhes. O que significa cada coluna da listagem?
+	$ ls -l # coluna 1: mostra as premissões do arquivo
+			# coluna 2: mostra o número de hard links
+			# coluna 3: mostra o dono do arquivo
+			# coluna 4: mostra o grupo que tem posse do arquivo
+			# coluna 5: mostra o número em byte qdo tamanho do arquivo
+			# coluna 6, 7 e 8: mostra a data e horário da última modificação
+			# coluna 9: mostra o nome do arquivo		 
+- listagem curta do diretório home, incluindo os arquivos escondidos.
+	$ ls -a
+
+- listagem longa de /var/spool/mail, ordenada por tamanho dos arquivos
+	$ ls -lS /var/spool/mail
+
+- listagem longa de /etc, ordenada alfabeticamente
+	$ ls -l /etc
+
+- listagem longa de /home, ordenada por datas crescentes
+	$ ls -lt /home
+
+- listagem curta de /usr, recursiva e ordenada por tamanho
+	$ lls -RS /usr
+
+14. O comando mkdir permite criar diretórios com subdiretórios. Leia sua página de manual e execute-o para criar a seguinte estrutura de diretórios (dentro de seu diretório home), usando apenas uma operação. Use o comando tree para conferir a estrutura criada:
+      a
+      `-- b
+          |-- c
+          |   |-- d
+          |   |   `-- h
+          |   |
+          |   `-- e
+          |
+          |-- f
+          |   `-- d
+          |
+          `-- j
+	$ mkdir -p a/b/{c/{d/h,e},f/d,j}
+
+15. Crie um arquivo .tar, com o conteúdo do seu diretório HOME. A seguir, compacte-o usando os comando compress, gzip e bzip2, e compare os resultados (tamanho).
+	$ tar cvf giuliana.tar /home/giuliana
+	$ cp giuliana.tar ./giuliana2.tar
+	$ compress giuliana2.tar
+	$ tar czvf giuliana2.tar.gz giuliana.tar
+	$ tar czvf giuliana2.tar.bz2 giuliana.tar
+	Observa-se que os arquivos compactados com gzip e bzip2 resultaram em arquivos do mesmo tamanho, enquanto usando "compress" o arquivo ficou maior que os outros dois.
+	
+UNIX Permissões de acesso
+
+1. Crie a seguinte estrutura de diretórios na sua area HOME:
+~/infraComp/aula01
+       |__ /aula02
+                |__ /exercicios
+       |__ /aula03
+       |__ /aula04
+       |__ /aula05
+	$ mkdir -p infraComp/{aula01,aula02/exercicios,aula03,aula04,aula05}
+
+2. Em cada diretório acima crie um arquivo chamado DATA, utilizando o comando touch.
+	$ cd infraComp
+	$ touch DATA
+	$ cd aula01
+	$ touch DATA
+	$ cd ../aula02
+	$ touch DATA
+	$ cd exercicios
+	$ touch DATA
+	$ cd ../../aula03
+	$ touch DATA
+	$ cd ../aula04
+	$ touch DATA
+
+3. Altere as permissões de acesso de seu diretório HOME para que somente você e os usuários do seu grupo tenham acesso de leitura e execução, e você tenha acesso de leitura, escrita e execução.
+	$ chmod 750 /home/giuliana
+
+4. Crie um diretório $HOME/mydir e ajuste suas permissões de forma que seus colegas consigam criar um arquivo nele. Crie um arquivo com seu nome no diretório correspondente do seu vizinho.
+	$ cd /home	
+	$ mkdir mydir
+	$ chmod g+w mydir
+	$ cd mydir
+	$ touch giuliana
+
+5. Qual a diferença no resultado da execução dos dois comandos abaixo?
+cp teste teste.bak # cria uma cópia de teste e o nomeia de teste.bak
+mv teste teste.bak # renomeia o arquivo teste para teste.bak
+
+6. Qual a diferença entre executar e ler um diretório (permissões r e x)?
+	Ao executar é possível entrar no diretório e ao ler é possível ver os arquivos e diretórios que estão dentro dele.
+
+7. Qual a diferença entre executar e ler um arquivo (permissões r e x)?
+	Ao executar o processador roda o arquivo, ao ler é possível ler o conteúdo do arquivo.
+
+8. Você conseguiria mudar o nome de seu próprio diretório home ? Por que ?
+	Conseguiria mas entraria em conflito com o nome de usuário.
+
+9. Crie um arquivo teste com os direitos de acesso rw-rw-rw-, e indique como usar o comando chmod para alterar seus direitos de acesso para:
+a. rw-rw-r--
+	$ chmod o-w teste
+b. r-xr-xr-x
+	$ chmod 555 teste
+c. rw-r--r--
+	$ chmod go-w teste
+d. r——--
+	$ chmod 400 teste
+
+10. Execute o comando umask para que novos arquivos criados no sistema tenham as permissões de acesso definidas a seguir, e teste as máscaras definidas criando novos arquivos (comando touch) e diretórios (comando mkdir). Finalmente, explique por que razão as permissões dos arquivos não coincidem com as esperadas, mas as dos diretórios sim.
+a. rw-rw-r--
+	$ umask 664
+b. r-xr-xr-x
+	$ umask 555
+c. rw-r--r--
+	$ umask 644
+d. r——--
+	$ umask 400
+	As permissões para os arquivos são diferentes porque, por padrão, as permissões de execução não são atribuídas aos arquivos. O sistema deixa isso a cargo do usuário.
+
+
+11. Crie dois diretórios d1 e d2, com permissões respectivas r--r--r-- e r-xr-xr-x, e compare as possibilidades de acesso em ambos. É possível listar o conteúdo de ambos, estando fora deles ? É possível entrar em ambos ?
+	Não é possível entrar no diretório d1 e é possível entrar no diretório d2. E possível listar o diretório d1, mas há um aviso de que não é possível acessar os arquivos, e é possível listar o diretório d2.
+
+UNIX Desenvolvimento de aplicacoes
+
+1. Escreva e compile o arquivo pi.c (cálculo de Pi através da série de Gregory) usando compilação estática e dinâmica. Compare o tamanho final dos executáveis e os símbolos internos de cada executável (comando nm).
+	Foi observado que, quando o código é compilado estaticamente, o tamanho do arquivo de execução fica maior, mas o tempo de execução menor. O inverso acontece quando o arquivo é compilado dinamicamente.
+	
+2. Construa uma biblioteca de operações aritméticas entre pares de inteiros, que implemente as operações abaixo indicadas. Devem ser gerados o arquivo fonte (.c), de cabeçalho (.h), a biblioteca estática (.a) e a biblioteca dinâmica (.so).
+int soma (int, int)
+int subt (int, int)
+int mult (int, int)
+int divi (int, int)
+
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ gcc -c calc.c
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ar rvs bibliotecacalc.a calc.o
+ar: creating bibliotecacalc.a
+a - calc.o
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ar t bibliotecacalc.a 
+calc.o
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ gcc -fPIC -c calc.c
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ~> gcc -g -shared -Wl,-soname,libtest.so.0 -o libtest.so.0.0 file1.o file2.o file3.o
+bash: /home/giuliana: Is a directory
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ~> gcc -g -shared -Wl,-soname,libtest.so.0 -o libtest.so.0.0 calc.o
+bash: /home/giuliana: Is a directory
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ls
+bibliotecacalc.a  p10
+calc.c            p11
+calc.h            p12
+calc.o            p13
+gcc               p14
+__MACOSX          ping-pong-os-intro-20150824.pdf
+p00               regras_das_atividades_de_laboratorio-20171129.pdf
+p01               relatorio.tgz
+p02               RespostasUnix.txt
+p03               script so
+p04               socm-livro.pdf
+p05               TextoWindows
+p06               UNIX_Comandos_em_arquivos.sh
+p07               UNIX_Desenvolvimento_de_aplicacoes.txt
+p08               UNIX_Permissões_de_acesso.txt
+p09
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ gcc -g -shared -Wl,-soname,libtest.so.0 -o libtest.so.0.0 calc.o
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ls
+bibliotecacalc.a  p04  ping-pong-os-intro-20150824.pdf
+calc.c            p05  regras_das_atividades_de_laboratorio-20171129.pdf
+calc.h            p06  relatorio.tgz
+calc.o            p07  RespostasUnix.txt
+gcc               p08  script so
+libtest.so.0.0    p09  socm-livro.pdf
+__MACOSX          p10  TextoWindows
+p00               p11  UNIX_Comandos_em_arquivos.sh
+p01               p12  UNIX_Desenvolvimento_de_aplicacoes.txt
+p02               p13  UNIX_Permissões_de_acesso.txt
+p03               p14
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ mv libtest.so.0.0 /usr/local/lib
+mv: cannot move 'libtest.so.0.0' to '/usr/local/lib/libtest.so.0.0': Permission denied
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ sudo mv libtest.so.0.0 /usr/local/lib
+[sudo] password for giuliana: 
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ln -s libtest.so.0.0 libtest.so.0
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ln -s libtest.so.0 libtest.so
+giuliana@giuliana-Aspire-F5-573G:~/Documents/SO$ ls -l /usr/local/lib
+total 156488
+drwxr-xr-x  3 root     root         4096 Set 19  2018 gcc
+drwxr-xr-x  8 root     root         4096 Set 22  2018 ghdl
+-rwxr-xr-x  1 root     root        13160 Set 22  2018 libghdlvpi.so
+-rw-r--r--  1 root     root      1011172 Mar 15 14:34 libikvm-native.a
+-rwxr-xr-x  1 root     root         1004 Mar 15 14:34 libikvm-native.la
+-rwxr-xr-x  1 root     root       606136 Mar 15 14:34 libikvm-native.so
+lrwxrwxrwx  1 root     root           17 Mar 15 14:34 libmono-2.0.a -> libmonosgen-2.0.a
+lrwxrwxrwx  1 root     root           18 Mar 15 14:34 libmono-2.0.la -> libmonosgen-2.0.la
+lrwxrwxrwx  1 root     root           18 Mar 15 14:34 libmono-2.0.so -> libmonosgen-2.0.so
+lrwxrwxrwx  1 root     root           20 Mar 15 14:34 libmono-2.0.so.1 -> libmonosgen-2.0.so.1
+lrwxrwxrwx  1 root     root           24 Mar 15 14:34 libmono-2.0.so.1.0.0 -> libmonosgen-2.0.so.1.0.0
+-rw-r--r--  1 root     root     46610558 Mar 15 14:34 libmonoboehm-2.0.a
+-rwxr-xr-x  1 root     root         1028 Mar 15 14:34 libmonoboehm-2.0.la
+lrwxrwxrwx  1 root     root           25 Mar 15 14:34 libmonoboehm-2.0.so -> libmonoboehm-2.0.so.1.0.0
+lrwxrwxrwx  1 root     root           25 Mar 15 14:34 libmonoboehm-2.0.so.1 -> libmonoboehm-2.0.so.1.0.0
+-rwxr-xr-x  1 root     root     20509544 Mar 15 14:34 libmonoboehm-2.0.so.1.0.0
+-rwxr-xr-x  1 root     root      4209416 Mar 15 14:34 libmono-btls-shared.so
+-rw-r--r--  1 root     root      1759448 Mar 15 14:34 libMonoPosixHelper.a
+-rwxr-xr-x  1 root     root         1036 Mar 15 14:34 libMonoPosixHelper.la
+-rwxr-xr-x  1 root     root      1040264 Mar 15 14:34 libMonoPosixHelper.so
+-rw-r--r--  1 root     root       939310 Mar 15 14:34 libmono-profiler-aot.a
+-rwxr-xr-x  1 root     root         1056 Mar 15 14:34 libmono-profiler-aot.la
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-aot.so -> libmono-profiler-aot.so.0.0.0
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-aot.so.0 -> libmono-profiler-aot.so.0.0.0
+-rwxr-xr-x  1 root     root       557384 Mar 15 14:34 libmono-profiler-aot.so.0.0.0
+-rw-r--r--  1 root     root        93104 Mar 15 14:34 libmono-profiler-aot-static.a
+-rwxr-xr-x  1 root     root          973 Mar 15 14:34 libmono-profiler-aot-static.la
+-rw-r--r--  1 root     root      1005164 Mar 15 14:34 libmono-profiler-coverage.a
+-rwxr-xr-x  1 root     root         1091 Mar 15 14:34 libmono-profiler-coverage.la
+lrwxrwxrwx  1 root     root           34 Mar 15 14:34 libmono-profiler-coverage.so -> libmono-profiler-coverage.so.0.0.0
+lrwxrwxrwx  1 root     root           34 Mar 15 14:34 libmono-profiler-coverage.so.0 -> libmono-profiler-coverage.so.0.0.0
+-rwxr-xr-x  1 root     root       596032 Mar 15 14:34 libmono-profiler-coverage.so.0.0.0
+-rw-r--r--  1 root     root       158956 Mar 15 14:34 libmono-profiler-coverage-static.a
+-rwxr-xr-x  1 root     root          988 Mar 15 14:34 libmono-profiler-coverage-static.la
+-rw-r--r--  1 root     root      1492192 Mar 15 14:34 libmono-profiler-log.a
+-rwxr-xr-x  1 root     root         1060 Mar 15 14:34 libmono-profiler-log.la
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-log.so -> libmono-profiler-log.so.0.0.0
+lrwxrwxrwx  1 root     root           29 Mar 15 14:34 libmono-profiler-log.so.0 -> libmono-profiler-log.so.0.0.0
+-rwxr-xr-x  1 root     root       882448 Mar 15 14:34 libmono-profiler-log.so.0.0.0
+-rw-r--r--  1 root     root       645986 Mar 15 14:34 libmono-profiler-log-static.a
+-rwxr-xr-x  1 root     root          973 Mar 15 14:34 libmono-profiler-log-static.la
+-rw-r--r--  1 root     root     52873716 Mar 15 14:34 libmonosgen-2.0.a
+-rwxr-xr-x  1 root     root         1021 Mar 15 14:34 libmonosgen-2.0.la
+lrwxrwxrwx  1 root     root           24 Mar 15 14:34 libmonosgen-2.0.so -> libmonosgen-2.0.so.1.0.0
+lrwxrwxrwx  1 root     root           24 Mar 15 14:34 libmonosgen-2.0.so.1 -> libmonosgen-2.0.so.1.0.0
+-rwxr-xr-x  1 root     root     22916416 Mar 15 14:34 libmonosgen-2.0.so.1.0.0
+-rw-r--r--  1 root     root       880352 Mar 15 14:34 libMonoSupportW.a
+-rwxr-xr-x  1 root     root         1011 Mar 15 14:34 libMonoSupportW.la
+-rwxr-xr-x  1 root     root       522512 Mar 15 14:34 libMonoSupportW.so
+-rw-r--r--  1 root     root       539840 Mar 15 14:34 libmono-system-native.a
+-rwxr-xr-x  1 root     root         1063 Mar 15 14:34 libmono-system-native.la
+lrwxrwxrwx  1 root     root           30 Mar 15 14:34 libmono-system-native.so -> libmono-system-native.so.0.0.0
+lrwxrwxrwx  1 root     root           30 Mar 15 14:34 libmono-system-native.so.0 -> libmono-system-native.so.0.0.0
+-rwxr-xr-x  1 root     root       246072 Mar 15 14:34 libmono-system-native.so.0.0.0
+-rwxrwxr-x  1 giuliana giuliana     7960 Abr 14 18:33 libtest.so.0.0
+drwxr-xr-x 23 root     root         4096 Mar 15 14:34 mono
+drwxr-xr-x  3 root     root         4096 Mar 15 14:34 monodoc
+drwxr-xr-x  2 root     root         4096 Mar 15 14:34 mono-source-libs
+drwxr-xr-x  2 root     root         4096 Mar 15 14:34 pkgconfig
+drwxrwsr-x  4 root     staff        4096 Nov 15 12:04 python2.7
+drwxrwsr-x  3 root     staff        4096 Ago  1  2017 python3.5
+drwxr-xr-x  2 root     root         4096 Mai 28  2018 warsaw
+
+	 
+3. Construa um pequeno programa que use a biblioteca do exercício anterior, ligando-a (a) estaticamente e (b) dinamicamente com seu código.
+	gcc -o calculadora calculadora.c -L. -ltest
+	gcc -static calculadora.c -o calculadora -L. -ltest	
+
+4. Efetue a execução passo-a-passo do programa escrito na questão anterior, usando o ddd ou diretamente o gdb.
+
+
+5. Faça o profiling do programa escrito na questão 3, usando o gprof.
+$ gprof calculadora gmon.out
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+6. Identifique todos os arquivos abertos durante a execução do comando de sistema uptime.
+$ uptime
+ 19:05:52 up  7:18,  1 user,  load average: 1,10, 1,23, 1,27
+
