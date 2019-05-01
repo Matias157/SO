@@ -10,7 +10,10 @@ int cont = 1;
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 
 task_t *scheduler(){
-	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue)); //retorna o primeiro elemento da fila de tarefas
+	task_t *aux;
+	aux = ReadyQueue;
+	queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue);
+	return(aux); //retorna o primeiro elemento da fila de tarefas
 }
 
 void dispatcher_body(){
