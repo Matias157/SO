@@ -10,10 +10,7 @@ int cont = 1;
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 
 task_t *scheduler(){
-	task_t *aux;
-	aux = ReadyQueue;
-	queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue);
-	return(aux); //retorna o primeiro elemento da fila de tarefas
+	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue));
 }
 
 void dispatcher_body(){
@@ -57,7 +54,8 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 		exit (1);
 	}
 
-	queue_append((queue_t**)&ReadyQueue,(queue_t*)task);
+	if(task != &Dispatcher)
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)task);
 
 	makecontext(&(task->context), (void*)(*start_func), 1, arg);
 
@@ -75,7 +73,10 @@ int task_switch (task_t *task){
 }
 
 void task_exit (int exitCode){
-	task_switch(&MainTask);
+	if(TaskCurrent == &Dispatcher)
+		task_switch(&MainTask);
+	else
+		task_switch(&Dispatcher);
 }
 
 int task_id (){
@@ -83,5 +84,17 @@ int task_id (){
 }
 
 void task_yield (){
+	if(TaskCurrent != &MainTask)
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
 	task_switch(&Dispatcher);
+}
+
+void task_suspend (task_t *task, task_t **queue)
+{
+
+}
+
+void task_resume (task_t *task)
+{
+
 }
