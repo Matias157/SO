@@ -28,6 +28,7 @@ void pingpong_init (){
 	MainTask.prev = NULL;
 	MainTask.id = 0;
 	MainTask.next = NULL;
+	MainTask.status = Running;
 	TaskCurrent = &MainTask;
 	task_create(&Dispatcher, dispatcher_body, "");
 
@@ -59,6 +60,8 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 
 	makecontext(&(task->context), (void*)(*start_func), 1, arg);
 
+	task->status = Ready;
+
 	task->id = cont;
 	cont++;
 
@@ -66,6 +69,7 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 }
 
 int task_switch (task_t *task){
+	task->status = Running;
 	TaskOld = TaskCurrent;
 	TaskCurrent = task;
 	swapcontext(&(TaskOld->context), &(TaskCurrent->context));
@@ -86,15 +90,32 @@ int task_id (){
 void task_yield (){
 	if(TaskCurrent != &MainTask)
 		queue_append((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
+		TaskCurrent->status = Ready;
 	task_switch(&Dispatcher);
 }
 
-void task_suspend (task_t *task, task_t **queue)
-{
-
+void task_suspend (task_t *task, task_t **queue){
+	if(queue == NULL)
+		return;
+	else if(task == NULL){
+		if(TaskCurrent == &Dispatcher || TaskCurrent == &MainTask)
+			return;
+		else{
+			queue_remove((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
+			queue_append((queue_t**)queue,(queue_t*)TaskCurrent);
+			TaskCurrent->status = Suspended;
+			return;
+		}	
+	}
+	else{
+		queue_remove((queue_t**)&ReadyQueue,(queue_t*)task);
+		queue_append((queue_t**)queue,(queue_t*)task);
+		task->status = Suspended;
+	}
 }
 
-void task_resume (task_t *task)
-{
-
+void task_resume (task_t *task){
+	queue_remove((queue_t**)&SuspendQueue,(queue_t*)task);
+	queue_append((queue_t**)&ReadyQueue,(queue_t*)task);
+	task->status = Ready;
 }

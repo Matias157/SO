@@ -9,6 +9,8 @@
 #ifndef __DATATYPES__
 #define __DATATYPES__
 
+enum status_t{Ready, Running, Suspended};
+
 // Estrutura que define uma tarefa
 typedef struct task_t
 {
@@ -17,7 +19,7 @@ typedef struct task_t
 	ucontext_t context;
 	void *stack;
 	struct task_t *parent;
-	//enum status_t status;
+	enum status_t status;
 } task_t ;
 
 // estrutura que define um semáforo
