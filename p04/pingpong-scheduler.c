@@ -13,7 +13,6 @@ task_t Pang, Peng, Ping, Pong, Pung ;
 void Body (void * arg)
 {
   int i ;
-
   printf ("%s iniciando com prioridade %d\n", (char *) arg, task_getprio(NULL)) ;
 
   for (i=0; i<10; i++)
