@@ -1,13 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ucontext.h>
+#include <signal.h>
+#include <sys/time.h>
 #include "pingpong.h"
 #include "queue.h"
 
 #define STACKSIZE 32768
 
+// estrutura que define um tratador de sinal (deve ser global ou static)
+struct sigaction action ;
+
+// estrutura de inicialização to timer
+struct itimerval timer;
+
 int cont = 1;
+int ticks = 0;
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
+
+void timer_handler(){ //tratador do timer
+	if(ticks <= 20)
+		ticks++;
+	else{
+		ticks = 0;
+		task_yield();
+	}
+}
 
 task_t *scheduler(){
 	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue));
@@ -17,6 +35,10 @@ void dispatcher_body(){
 	while(queue_size((queue_t*) ReadyQueue) > 0){
 		task_t *next = scheduler();
 		if(next){
+			if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
+            	perror ("Erro em setitimer: ") ;
+            	exit (1) ;
+            }
 			task_switch(next);
 		}
 	}
@@ -30,7 +52,17 @@ void pingpong_init (){
 	MainTask.next = NULL;
 	MainTask.status = Running;
 	TaskCurrent = &MainTask;
-	task_create(&Dispatcher, dispatcher_body, "");
+	action.sa_handler = timer_handler;
+    sigemptyset (&action.sa_mask);
+    action.sa_flags = 0;
+    if(sigaction (SIGALRM, &action, 0) < 0){
+    	perror ("Erro em sigaction: ");
+    	exit (1);
+    }
+    // ajusta valores do temporizador
+    timer.it_value.tv_usec = 1000;      // primeiro disparo, em micro-segundos
+    timer.it_interval.tv_usec = 1000;   // disparos subsequentes, em micro-segundos
+    task_create(&Dispatcher, dispatcher_body, "");
 
 	setvbuf(stdout , 0, _IONBF, 0);
 }

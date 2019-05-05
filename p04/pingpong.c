@@ -17,7 +17,7 @@ task_t *scheduler(){
 			if(task_mais_prioritaria->prio_dim > -20){								// e se a task mais prioritaria não tiver prioridade menor que -20
 				task_mais_prioritaria->prio_dim--;									// envenhece a prioridade da task mais prioritaria
 			}
-			task_mais_prioritaria = task_comparacao;								// a task mais prioritária pasa a aser a avaliada
+			task_mais_prioritaria = task_comparacao;								// a task mais prioritária pasa a ser a avaliada
 		}
 		else{																		// se a task mais prioritária tiver ainda a maior prioridade
 			if(task_comparacao->prio_dim > -20){										// e se não tiver prioridade menor que -20	
@@ -148,14 +148,14 @@ void task_suspend (task_t *task, task_t **queue){
 			return;
 		else{
 			queue_remove((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
-			queue_append((queue_t**)&SuspendQueue,(queue_t*)TaskCurrent);	//queue_append((queue_t**)queue,(queue_t*)TaskCurrent); //????
+			queue_append((queue_t**)queue,(queue_t*)TaskCurrent);
 			TaskCurrent->status = Suspended;
 			return;
 		}	
 	}
 	else{
 		queue_remove((queue_t**)&ReadyQueue,(queue_t*)task);
-		queue_append((queue_t**)&SuspendQueue,(queue_t*)task);//queue_append((queue_t**)queue,(queue_t*)task);
+		queue_append((queue_t**)queue,(queue_t*)task);
 		task->status = Suspended;
 	}
 }
