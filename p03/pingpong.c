@@ -10,14 +10,14 @@ int cont = 1;
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 
 task_t *scheduler(){
-	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue));
+	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue)); //retira a primeira tarefa da fila de prontas e a retorna
 }
 
 void dispatcher_body(){
-	while(queue_size((queue_t*) ReadyQueue) > 0){
+	while(queue_size((queue_t*) ReadyQueue) > 0){ //verifica se a fila de prontas não esta vazia
 		task_t *next = scheduler();
 		if(next){
-			task_switch(next);
+			task_switch(next); //da o processador para a primeira tarefa da fila
 		}
 	}
 	task_exit(0);
@@ -30,7 +30,7 @@ void pingpong_init (){
 	MainTask.next = NULL;
 	MainTask.status = Running;
 	TaskCurrent = &MainTask;
-	task_create(&Dispatcher, dispatcher_body, "");
+	task_create(&Dispatcher, dispatcher_body, ""); //cria o dispatcher
 
 	setvbuf(stdout , 0, _IONBF, 0);
 }
@@ -56,7 +56,7 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 	}
 
 	if(task != &Dispatcher)
-		queue_append((queue_t**)&ReadyQueue,(queue_t*)task);
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)task); //insere a nova tarefa no final da fila de prontas
 
 	makecontext(&(task->context), (void*)(*start_func), 1, arg);
 
@@ -77,10 +77,10 @@ int task_switch (task_t *task){
 }
 
 void task_exit (int exitCode){
-	if(TaskCurrent == &Dispatcher)
+	if(TaskCurrent == &Dispatcher) //caso a tarefa atual seja o dispatcher devemos voltar para a main
 		task_switch(&MainTask);
 	else
-		task_switch(&Dispatcher);
+		task_switch(&Dispatcher); //caso seja qualquer outra tarefa retornamos para o dispatcher
 }
 
 int task_id (){
@@ -89,9 +89,9 @@ int task_id (){
 
 void task_yield (){
 	if(TaskCurrent != &MainTask)
-		queue_append((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent); //insere a tarefa no final da fila de prontas
 		TaskCurrent->status = Ready;
-	task_switch(&Dispatcher);
+	task_switch(&Dispatcher); //volta para o dispatcher
 }
 
 void task_suspend (task_t *task, task_t **queue){
@@ -101,21 +101,21 @@ void task_suspend (task_t *task, task_t **queue){
 		if(TaskCurrent == &Dispatcher || TaskCurrent == &MainTask)
 			return;
 		else{
-			queue_remove((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
-			queue_append((queue_t**)queue,(queue_t*)TaskCurrent);
+			queue_remove((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent); //remove a tarefa da fila de prontas
+			queue_append((queue_t**)queue,(queue_t*)TaskCurrent); //insere a tarefa no final da fila queue
 			TaskCurrent->status = Suspended;
 			return;
 		}	
 	}
 	else{
-		queue_remove((queue_t**)&ReadyQueue,(queue_t*)task);
-		queue_append((queue_t**)queue,(queue_t*)task);
+		queue_remove((queue_t**)&ReadyQueue,(queue_t*)task); //remove a tarefa da fila de prontas
+		queue_append((queue_t**)queue,(queue_t*)task); //insere a tarefa no final da fila queue
 		task->status = Suspended;
 	}
 }
 
 void task_resume (task_t *task){
-	queue_remove((queue_t**)&SuspendQueue,(queue_t*)task);
-	queue_append((queue_t**)&ReadyQueue,(queue_t*)task);
+	queue_remove((queue_t**)&SuspendQueue,(queue_t*)task); //remove a tarefa da fila de suspensas
+	queue_append((queue_t**)&ReadyQueue,(queue_t*)task); //insere a tarefa no final da fila de prontas
 	task->status = Ready;
 }

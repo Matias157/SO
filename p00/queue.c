@@ -46,7 +46,7 @@ queue_t *queue_remove (queue_t **queue, queue_t *elem){
 				printf("Elemento não pertence a nenhuma fila\n");
 				return(NULL);
 			}
-			if(*queue != elem){ // verfifoca se o elemento não é o inicio da lista
+			if(*queue != elem){ // verfica se o elemento não é o inicio da lista
 				cont = elem->next;
 				while(cont != *queue){ // procura o inicio da lista
 					cont = cont->next;
