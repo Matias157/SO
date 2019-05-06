@@ -15,7 +15,7 @@ struct sigaction action ;
 struct itimerval timer;
 
 int cont = 1;
-unsigned int ticks = 0, processor_time_init;
+unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks total e o número de ticks inicial de cada tempo de processamento
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 
 void timer_handler(){ //tratador do timer
@@ -89,9 +89,9 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 
 	makecontext(&(task->context), (void*)(*start_func), 1, arg);
 
-	task->execution_time = systime();
-	task->processor_time = 0;
-	task->activations = 0;
+	task->execution_time = systime();	// salva em qual tempo se iniciou a tarefa
+	task->processor_time = 0;			// inicia em 0 porque não foi usado tempo de processador para executá-la ainda
+	task->activations = 0;				// mesmo motivo do de cima
 	task->status = Ready;
 
 	task->id = cont;
@@ -101,20 +101,19 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 }
 
 int task_switch (task_t *task){
-	TaskCurrent->processor_time += (systime() - processor_time_init);
-	processor_time_init = systime();
+	TaskCurrent->processor_time += (systime() - processor_time_init); // tarefa que já usou o processador recebe a soma do tempo de uso antigo com o tempo usado na última vez
+	processor_time_init = systime();	// reinicializa o tempo de processamento para a próxima tarefa
 
 	task->status = Running;
 	TaskOld = TaskCurrent;
 	TaskCurrent = task;
-	TaskCurrent->activations++;
-
+	TaskCurrent->activations++;	// contabiliza o número de activations já que está tarefa será executada logo em seguida
 	swapcontext(&(TaskOld->context), &(TaskCurrent->context));
 	return(0);
 }
 
 void task_exit (int exitCode){
-	TaskCurrent->execution_time = (systime() - TaskCurrent->execution_time);
+	TaskCurrent->execution_time = (systime() - TaskCurrent->execution_time);	// contabiliza o tempo total de execução calculando o intervalo de tempo entre o que foi salvo inicialmente e o atual
 	if(TaskCurrent == &Dispatcher)
 		printf("Dispatcher FIM\n");
 	printf("Task %d exit: execution time %d ms, processor time %d ms, %d activations\n", TaskCurrent->id, TaskCurrent->execution_time, TaskCurrent->processor_time, TaskCurrent->activations);
@@ -162,6 +161,6 @@ void task_resume (task_t *task){
 	task->status = Ready;
 }
 
-unsigned int systime (){
+unsigned int systime (){ //retorna o número de ticks desde o início do programa
 	return ticks;
 }
