@@ -10,10 +10,10 @@ task_t MainTask, *TaskCurrent, *TaskOld;
 
 void pingpong_init (){
 	getcontext(&MainTask.context); //salva o contexto atual na task main
-	MainTask.prev = NULL;
-	MainTask.id = 0;
-	MainTask.next = NULL;
-	TaskCurrent = &MainTask;
+	MainTask.prev = NULL; //não iniciamos prev
+	MainTask.id = 0; //id da main é 0
+	MainTask.next = NULL; //não iniciamos next
+	TaskCurrent = &MainTask; //primeiramente a task atual é a main
 
 	setvbuf(stdout , 0, _IONBF, 0); //desativa o buffer da saida padrao (stdout), usado pela função printf
 }
@@ -21,8 +21,8 @@ void pingpong_init (){
 int task_create (task_t *task, void (*start_func)(void *), void *arg){
 	getcontext(&(task->context)); //salva o contexto atual na task
 
-	task->next = NULL;
-	task->prev = NULL;
+	task->next = NULL; //não iniciamos next
+	task->prev = NULL; //não iniciamos prev
 
 	//faz a criação da pilha
 	char *stack ;
@@ -39,14 +39,12 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 		exit (1);
 	}
 
-	//modifica o contexto de task para start_func
-	makecontext(&(task->context), (void*)(*start_func), 1, arg);
+	makecontext(&(task->context), (void*)(*start_func), 1, arg); //modifica o contexto de task para start_func
 
-	//atualiza os ids das tasks
-	task->id = cont;
-	cont++;
+	task->id = cont; //atualiza os ids das tasks
+	cont++; //incrementa o contador global dos ids
 
-	return(task->id);
+	return(task->id); //retorna o id da tarefa que foi criada
 }
 
 int task_switch (task_t *task){
@@ -61,5 +59,5 @@ void task_exit (int exitCode){
 }
 
 int task_id (){
-	return(TaskCurrent->id);
+	return(TaskCurrent->id); //retorna o id da task atual
 }
