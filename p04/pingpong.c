@@ -12,7 +12,6 @@ task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 task_t *scheduler(){
 	task_t *task_mais_prioritaria = ReadyQueue, *task_comparacao = ReadyQueue->next; // a task mais prioritaria é a com menor prioridade
 	while(task_comparacao != ReadyQueue){											// avalia até voltar a cabeça da fila
-		//printf("%d %d\n", task_mais_prioritaria->prio_dim, task_comparacao-> prio_dim);
 		if(task_mais_prioritaria->prio_dim >= task_comparacao->prio_dim){			// se a task mais prioritaria até então tiver prioridade menor
 			if(task_mais_prioritaria->prio_dim > -20){								// e se a task mais prioritaria não tiver prioridade menor que -20
 				task_mais_prioritaria->prio_dim--;									// envenhece a prioridade da task mais prioritaria

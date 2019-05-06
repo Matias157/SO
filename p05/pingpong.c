@@ -18,21 +18,13 @@ int cont = 1;
 int ticks = 0;
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 
-void timer_handler(){ //tratador do timer
-	if(ticks <= 20)
-		ticks++;
-	else{
-		ticks = 0;
-		task_yield();
-	}
-}
 
-/*void timer_handler(){ //tratador do timer
+void timer_handler(){ //tratador do timer
 	ticks++;
 	if(ticks%20 == 0){
 		task_yield();
 	}
-}*/
+}
 
 task_t *scheduler(){
 	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue));
@@ -42,10 +34,6 @@ void dispatcher_body(){
 	while(queue_size((queue_t*) ReadyQueue) > 0){
 		task_t *next = scheduler();
 		if(next){
-			if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
-            	perror ("Erro em setitimer: ") ;
-            	exit (1) ;
-            }
 			task_switch(next);
 		}
 	}
@@ -70,6 +58,10 @@ void pingpong_init (){
     // ajusta valores do temporizador
     timer.it_value.tv_usec = 1000;      // primeiro disparo, em micro-segundos
     timer.it_interval.tv_usec = 1000;   // disparos subsequentes, em micro-segundos
+    if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
+        perror ("Erro em setitimer: ") ;
+        exit (1) ;
+    }
     task_create(&Dispatcher, dispatcher_body, "");
 
 	setvbuf(stdout , 0, _IONBF, 0);
