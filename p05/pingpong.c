@@ -59,6 +59,7 @@ void pingpong_init (){
 	MainTask.next = NULL;
 	MainTask.status = Running;
 	TaskCurrent = &MainTask;
+	// implementação análoga aos códigos-exemplo
 	action.sa_handler = timer_handler;
     sigemptyset (&action.sa_mask);
     action.sa_flags = 0;
