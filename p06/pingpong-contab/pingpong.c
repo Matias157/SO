@@ -15,24 +15,14 @@ struct sigaction action ;
 struct itimerval timer;
 
 int cont = 1;
-int ticks = 0;
+unsigned int ticks = 0, processor_time_init;
 task_t MainTask, *TaskCurrent, *TaskOld, *SuspendQueue, *ReadyQueue, Dispatcher;
 
 void timer_handler(){ //tratador do timer
-	if(ticks <= 20)
-		ticks++;
-	else{
-		ticks = 0;
-		task_yield();
-	}
-}
-
-/*void timer_handler(){ //tratador do timer
 	ticks++;
-	if(ticks%20 == 0){
+	if(ticks%20 == 0)
 		task_yield();
-	}
-}*/
+}
 
 task_t *scheduler(){
 	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue));
@@ -42,10 +32,6 @@ void dispatcher_body(){
 	while(queue_size((queue_t*) ReadyQueue) > 0){
 		task_t *next = scheduler();
 		if(next){
-			if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
-            	perror ("Erro em setitimer: ") ;
-            	exit (1) ;
-            }
 			task_switch(next);
 		}
 	}
@@ -69,6 +55,10 @@ void pingpong_init (){
     // ajusta valores do temporizador
     timer.it_value.tv_usec = 1000;      // primeiro disparo, em micro-segundos
     timer.it_interval.tv_usec = 1000;   // disparos subsequentes, em micro-segundos
+    if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
+        perror ("Erro em setitimer: ") ;
+        exit (1) ;
+    }
     task_create(&Dispatcher, dispatcher_body, "");
 
 	setvbuf(stdout , 0, _IONBF, 0);
@@ -99,6 +89,9 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 
 	makecontext(&(task->context), (void*)(*start_func), 1, arg);
 
+	task->execution_time = systime();
+	task->processor_time = 0;
+	task->activations = 0;
 	task->status = Ready;
 
 	task->id = cont;
@@ -108,14 +101,23 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 }
 
 int task_switch (task_t *task){
+	TaskCurrent->processor_time += (systime() - processor_time_init);
+	processor_time_init = systime();
+
 	task->status = Running;
 	TaskOld = TaskCurrent;
 	TaskCurrent = task;
+	TaskCurrent->activations++;
+
 	swapcontext(&(TaskOld->context), &(TaskCurrent->context));
 	return(0);
 }
 
 void task_exit (int exitCode){
+	TaskCurrent->execution_time = (systime() - TaskCurrent->execution_time);
+	if(TaskCurrent == &Dispatcher)
+		printf("Dispatcher FIM\n");
+	printf("Task %d exit: execution time %d ms, processor time %d ms, %d activations\n", TaskCurrent->id, TaskCurrent->execution_time, TaskCurrent->processor_time, TaskCurrent->activations);
 	if(TaskCurrent == &Dispatcher)
 		task_switch(&MainTask);
 	else
@@ -127,9 +129,10 @@ int task_id (){
 }
 
 void task_yield (){
-	if(TaskCurrent != &MainTask)
+	if(TaskCurrent != &MainTask){
 		queue_append((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent);
 		TaskCurrent->status = Ready;
+	}
 	task_switch(&Dispatcher);
 }
 
@@ -157,4 +160,8 @@ void task_resume (task_t *task){
 	queue_remove((queue_t**)&SuspendQueue,(queue_t*)task);
 	queue_append((queue_t**)&ReadyQueue,(queue_t*)task);
 	task->status = Ready;
+}
+
+unsigned int systime (){
+	return ticks;
 }
