@@ -3,6 +3,7 @@
 // Versão 1.0 -- Março de 2015
 //
 // Estruturas de dados internas do sistema operacional
+// Alunos: Alexandre Herrero Matias e Giuliana Martins Silva 
 
 #include <ucontext.h>
 
@@ -20,8 +21,6 @@ typedef struct task_t
 	void *stack;
 	struct task_t *parent;
 	enum status_t status;
-	int prio_dim;
-	int prio_est;
 	unsigned int execution_time;
 	unsigned int processor_time;
 	unsigned int activations;

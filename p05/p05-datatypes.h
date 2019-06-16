@@ -3,6 +3,7 @@
 // Versão 1.0 -- Março de 2015
 //
 // Estruturas de dados internas do sistema operacional
+// Alunos: Alexandre Herrero Matias e Giuliana Martins Silva 
 
 #include <ucontext.h>
 
