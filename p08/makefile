@@ -9,5 +9,5 @@ queue.o: queue.c
 pingpong.o: pingpong.c queue.h datatypes.h
 	gcc -o pingpong.o -c pingpong.c 
 
-pingpong-join.o: pingpong-join.c pingpong.h
+pingpong-sleep.o: pingpong-join.c pingpong.h
 	gcc -o pingpong-join.o -c pingpong-join.c

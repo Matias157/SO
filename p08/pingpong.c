@@ -154,9 +154,7 @@ void task_suspend (task_t *task, task_t **queue){
 		return;
 	else if(task == NULL){
 		if(TaskCurrent == &Dispatcher) //não podemos suspender o dispatcher
-		{
 			return;
-		}
 		else{
 			queue_append((queue_t**)queue,(queue_t*)TaskCurrent); //insere a tarefa no final da fila queue
 			TaskCurrent->status = Suspended; ///status de task vai para Suspended
@@ -173,12 +171,10 @@ void task_suspend (task_t *task, task_t **queue){
 
 void task_resume (task_t *task){
 	task_t *auxtask = (task_t*)queue_remove((queue_t**)&(task->suspend_queue),(queue_t*)(task->suspend_queue)); //remove a tarefa da fila de suspensas
-	if(auxtask)
-	{
-		queue_append((queue_t**)&ReadyQueue,(queue_t*)auxtask); //insere a tarefa no final da fila de prontas
-		task->status = Ready; //status de task volta para Ready
-		auxtask->suspend_queue_excd = task->exit_code; //atualiza o exit code da fila de suspensas com a task da tarefa que se esperava a conclusao
-	}
+	queue_append((queue_t**)&ReadyQueue,(queue_t*)auxtask); //insere a tarefa no final da fila de prontas
+	task->status = Ready; //status de task volta para Ready
+	auxtask->suspend_queue_excd = task->exit_code; //atualiza o exit code da fila de suspensas com a task da tarefa que se esperava a conclusao
+	
 }
 
 unsigned int systime (){ //retorna o número de ticks desde o início do programa
