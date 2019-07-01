@@ -18,7 +18,7 @@ struct itimerval timer;
 
 int cont = 1;
 unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks total e o número de ticks inicial de cada tempo de processamento
-task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher;
+task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SleepQueue;
 
 void timer_handler(){ //tratador do timer
 	printf("entrou\n");

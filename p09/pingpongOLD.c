@@ -18,11 +18,11 @@ struct itimerval timer;
 
 int cont = 1;
 unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks total e o número de ticks inicial de cada tempo de processamento
-task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher;
+task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SleepQueue;
 
 void timer_handler(){ //tratador do timer
-	//printf("entrou no handler\n");
 	ticks++; //incrementa o contador global de ticks
+	printf("entrou\n");
 	if(ticks%20 == 0){ //se chegar a 20
 		task_yield(); //retorna a fila de prontas e chama a próxima tarefa
 	}
@@ -34,6 +34,20 @@ task_t *scheduler(){
 
 void dispatcher_body(){
 	while(queue_size((queue_t*) ReadyQueue) > 0){ //verifica se a fila de prontas não esta vazia
+		/*if(queue_size((queue_t*) SleepQueue) > 0){
+			queue_t **auxqueue = (queue_t**) &SleepQueue;
+			queue_t *auxelem = (queue_t*) SleepQueue;
+			queue_t *cont = auxelem->next;
+			while(cont != *auxqueue){ // procura o inicio da lista
+				cont = cont->next;
+				task_t *print = (task_t*) cont;
+				printf("wakeup: %d\n", print->wakeup);
+				printf("systime: %d\n", systime());
+				if(print->wakeup <= systime())
+					printf("id da task: %d\n", print->id);
+			}
+
+		}*/
 		task_t *next = scheduler(); //cria uma task auxiliar que recebe a primeira tarefa da fila de prontas
 		if(next){ //se next não for NULL
 			task_switch(next); //da o processador para a primeira tarefa da fila
@@ -54,19 +68,20 @@ void pingpong_init (){
 
 	//inicialização do timer análoga aos códigos-exemplo
 	action.sa_handler = timer_handler;
-	sigemptyset (&action.sa_mask);
-	action.sa_flags = 0;
-	if(sigaction (SIGALRM, &action, 0) < 0){
-		perror ("Erro em sigaction: ");
-		exit (1);
-	}
-	// ajusta valores do temporizador
-	timer.it_value.tv_usec = 1000;      // primeiro disparo, em micro-segundos
-	timer.it_interval.tv_usec = 1000;   // disparos subsequentes, em micro-segundos
-	if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
-	  perror ("Erro em setitimer: ") ;
-	  exit (1) ;
-	}
+    sigemptyset (&action.sa_mask);
+    action.sa_flags = 0;
+    if(sigaction (SIGALRM, &action, 0) < 0){
+    	perror ("Erro em sigaction: ");
+    	exit (1);
+    }
+    //ajusta valores do temporizador
+    timer.it_value.tv_usec = 1000;      // primeiro disparo, em micro-segundos
+    timer.it_interval.tv_usec = 1000;   // disparos subsequentes, em micro-segundos
+    if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
+        perror ("Erro em setitimer: ") ;
+        exit (1) ;
+    }
+	printf("foi timer\n");
 	task_create(&Dispatcher, dispatcher_body, ""); //cria o dispatcher
 
 	setvbuf(stdout , 0, _IONBF, 0); //desativa o buffer da saida padrao (stdout), usado pela função printf
@@ -190,4 +205,11 @@ int task_join (task_t *task){
 	else{
 		return(-1); //caso a tarefa seja nula retorna -1
 	}
+}
+
+void task_sleep (int t){
+	/*int currenttime = systime();
+	int time = currenttime + t*1000;
+	TaskCurrent->wakeup = time;
+	task_suspend(NULL, &SleepQueue);*/
 }
