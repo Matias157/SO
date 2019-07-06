@@ -18,12 +18,12 @@ struct itimerval timer;
 
 int cont = 1;
 unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks total e o número de ticks inicial de cada tempo de processamento
-task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SleepQueue;
+task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher;
 
 void timer_handler(){ //tratador do timer
-	printf("entrou\n");
 	ticks++; //incrementa o contador global de ticks
 	if(ticks%20 == 0){ //se chegar a 20
+		//printf("%d\n", ticks); 
 		task_yield(); //retorna a fila de prontas e chama a próxima tarefa
 	}
 }
@@ -43,6 +43,7 @@ void dispatcher_body(){
 }
 
 void pingpong_init (){
+
 	getcontext(&MainTask.context); //salva o contexto atual na task main
 	MainTask.prev = NULL; //não iniciamos prev
 	MainTask.id = 0; //id da main é 0
