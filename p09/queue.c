@@ -24,7 +24,7 @@ void queue_append (queue_t **queue, queue_t *elem){
 				}
 			}
 			else{
-				printf("O elemento já existe em outra fila");
+				printf("O elemento já existe em outra fila\n");
 			}
 		}
 		else{
@@ -32,7 +32,7 @@ void queue_append (queue_t **queue, queue_t *elem){
 		}
 	}
 	else{
-		printf("Está fila não existe!\n");
+		printf("Esta fila não existe!\n");
 	}
 }
 
