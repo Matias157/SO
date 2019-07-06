@@ -21,10 +21,9 @@ unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks to
 task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SleepQueue;
 
 void timer_handler(){ //tratador do timer
-	printf("entrou\n");
 	ticks++; //incrementa o contador global de ticks
-	if(ticks%20 == 0){ //se chegar a 20
-		task_yield(); //retorna a fila de prontas e chama a próxima tarefa
+    if(ticks%20 == 0 && TaskCurrent != &Dispatcher){
+        task_yield();
 	}
 }
 
@@ -33,12 +32,37 @@ task_t *scheduler(){
 }
 
 void dispatcher_body(){
-	while(queue_size((queue_t*) ReadyQueue) > 0){ //verifica se a fila de prontas não esta vazia
-		task_t *next = scheduler(); //cria uma task auxiliar que recebe a primeira tarefa da fila de prontas
-		if(next){ //se next não for NULL
-			task_switch(next); //da o processador para a primeira tarefa da fila
+	task_t* task_aux = SleepQueue;
+
+	if(SleepQueue != NULL){
+		if(task_aux->wakeup <= ticks){
+			task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue,(queue_t*)task_aux);
+			queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
+		}
+		task_aux = task_aux->next;
+		while(task_aux != SleepQueue && SleepQueue != NULL && task_aux != NULL){
+			if(task_aux->wakeup <= ticks){
+				task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue, (queue_t*)task_aux);
+				queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
+			}
+			task_aux = task_aux->next;
 		}
 	}
+
+    while(queue_size((queue_t*)ReadyQueue) > 0 || queue_size((queue_t*)SleepQueue) > 0){
+		task_aux = SleepQueue;
+		while(ReadyQueue == NULL && SleepQueue != NULL){
+			if(task_aux->wakeup <= ticks){
+				task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue, (queue_t*)task_aux);
+				queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
+			}
+			task_aux = task_aux->next;
+		}
+
+    	task_t* next = scheduler();
+		task_switch(next);
+    }
+    
 	task_exit(0);
 }
 
@@ -50,6 +74,7 @@ void pingpong_init (){
 	MainTask.status = Ready; //status da main sempre é Running
 	MainTask.suspend_queue = NULL;
 	MainTask.suspend_queue_excd = 0;
+	MainTask.wakeup = 0;
 	TaskCurrent = &MainTask; //primeiramente a task atual é a main
 
 	//inicialização do timer análoga aos códigos-exemplo
@@ -106,6 +131,7 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 	task->status = Ready; //status das tarefas na fila de prontas é Ready
 	task->suspend_queue = NULL;
 	task->suspend_queue_excd = 0;
+	task->wakeup = 0;
 
 	task->id = cont; //atualiza os ids das tasks
 	cont++; //incrementa o contador global dos ids
@@ -131,7 +157,7 @@ void task_exit (int exitCode){
 
 	while(TaskCurrent->suspend_queue != NULL) //verifica se a suspend queue da task é nula
 	{
-		task_resume(TaskCurrent); //vai resumindo cada uma das tasks que dependiam da CurrentTask
+		task_resume(TaskCurrent); //vai resumindo cada uma das tasks que dependiam da TaskCurrent
 	}
 	printf("Task %d exit: execution time %d ms, processor time %d ms, %d activations\n", TaskCurrent->id, TaskCurrent->execution_time, TaskCurrent->processor_time, TaskCurrent->activations);
 	if(TaskCurrent == &Dispatcher)
@@ -193,5 +219,9 @@ int task_join (task_t *task){
 }
 
 void task_sleep (int t){
+	TaskCurrent->wakeup = t*1000 + ticks;
+	TaskCurrent->status = Suspended;
+	queue_append((queue_t**)&SleepQueue,(queue_t*)TaskCurrent);
 
+	task_switch(&Dispatcher);
 }
