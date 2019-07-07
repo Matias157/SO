@@ -9,6 +9,12 @@
 
 #define _XOPEN_SOURCE 600	// para evitar erros POSIX no MacOS X
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <ucontext.h>
+#include <signal.h>
+#include <sys/time.h>
+#include "queue.h"
 #include "datatypes.h"		// estruturas de dados necessárias
 
 // funções gerais ==============================================================

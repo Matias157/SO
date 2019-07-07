@@ -1,12 +1,6 @@
 // Alunos: Alexandre Herrero Matias e Giuliana Martins Silva 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ucontext.h>
-#include <signal.h>
-#include <sys/time.h>
 #include "pingpong.h"
-#include "queue.h"
 
 #define STACKSIZE 32768
 
@@ -24,7 +18,7 @@ task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SuspendQueue,
 
 void timer_handler(){ //tratador do timer
 	ticks++; //incrementa o contador global de ticks
-	printf("tick\n");
+	//printf("tick\n");
     if(ticks%20 == 0 && TaskCurrent != &Dispatcher){
         task_yield();
 	}
@@ -224,6 +218,7 @@ unsigned int systime (){ //retorna o número de ticks desde o início do program
 
 int task_join (task_t *task){
 	if(task != NULL && task->status != Terminated){
+		printf("Join: task %d suspensa até a conclusão da task %d\n", TaskCurrent->id, task->id);
 		TaskCurrent->parent_id = task->id;
 		task_suspend(NULL, &SuspendQueue); //suspende a task
 		return(TaskCurrent->parent_excd); //retorna o exit code da task que se esperava a conclusao
@@ -262,7 +257,7 @@ int sem_down (semaphore_t *s){
 	if(s->value < 0){
 		tasksSem++;
 		//printf("task_suspend(NULL, &s->queue);\n");
-		queue_append((queue_t**)&(s->queue),(queue_t*)TaskCurrent);; // suspende task atual e a coloca na fila do semáforo
+		queue_append((queue_t**)&(s->queue),(queue_t*)TaskCurrent); // suspende task atual e a coloca na fila do semáforo
 		//printf("task_switch(&Dispatcher);\n");
 		task_switch(&Dispatcher); //troca para o dispatcher
 		//printf("saiu sem_down\n");

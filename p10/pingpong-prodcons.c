@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "pingpong.h"
 
 // operating system check
@@ -14,30 +15,34 @@ semaphore_t s_vaga, s_buffer, s_item;
 item_t* itens;
 task_t consumidores[NUM_CONSUMIDORES], produtores[NUM_PRODUTORES];
 
-void produtor()
+void produtor(void* arg)
 {
   while(1){
     task_sleep (1);
-    int num_item = random()%100;
-    sem_down(&s_vaga);
-    sem_down(&s_buffer);
-    item_t* new_item;
+    int num_item = rand()%100+1;
+    sem_down(&s_vaga);      // pede uma vaga
+    sem_down(&s_buffer);    // bloqueia o buffers
+
+    item_t* new_item = (item_t*)malloc(sizeof(item_t));
     new_item->id = num_item;
-    queue_append((queue_t**)&(itens),(queue_t*)(new_item));
-    printf("p%d\n produziu %d", (char*)arg , num_item);
-    sem_up(s_buffer);
-    sem_up(s_item);
+    queue_append((queue_t**)&itens,(queue_t*)new_item);   // insere item no fim da fila
+    printf("%s produziu %d\n", (char*)arg , num_item);
+
+    sem_up(&s_buffer);     // libera o buffer
+    sem_up(&s_item);       // libera um item
   }
 }
 
-void consumidor(){
+void consumidor(void* arg){
   while (1){
-    sem_down(s_item);
-    sem_down(s_buffer);
-    item_t* item = queue_remove((queue_t**)&(itens),(queue_t*)(itens));
-    sem_up(s_buffer);
-    sem_up(s_vaga);
-    printf("p%d\n consumiu %d", (char*)arg , item->id);
+    sem_down(&s_item);   // pede para consumir um item
+    sem_down(&s_buffer); // bloqueia o buffer
+
+    item_t* item = (item_t*)queue_remove((queue_t**)&(itens),(queue_t*)(itens));  // remove item do começo da fila
+    
+    sem_up(&s_buffer);   // libera o buffer
+    sem_up(&s_vaga);     // libera uma vaga no buffer
+    printf("%s consumiu %d\n", (char*)arg , item->id);
     task_sleep (1);
   }
 }
@@ -46,25 +51,22 @@ int main (int argc, char *argv[])
 {
 
   printf ("Main INICIO\n");
+
   pingpong_init ();
-  sem_create (&s_buffer, 5);
-  sem_create (&s_vaga, 1);
-  sem_create (&s_item, 0);
-  
-  task_create (&consumidores[0], consumidor, "c1");
-  task_create (&consumidores[1], consumidor, "c2");
-   
+
+  sem_create (&s_buffer, 1);  // valor 1 no buffer
+  sem_create (&s_vaga, 5);    // inicialmente há 5 vagas
+  sem_create (&s_item, 0);    // inicialmente não há item nenhum
+
   task_create (&produtores[0], produtor, "p1");
   task_create (&produtores[1], produtor, "p2");
   task_create (&produtores[2], produtor, "p3");
+  
+  task_create (&consumidores[0], consumidor, "                         c1");
+  task_create (&consumidores[1], consumidor, "                         c2");
 
-  for(int i = 0; i < NUM_CONSUMIDORES; i++){
-    task_join (&consumidores[i]);
-  }
-
-  for(int i = 0; i < NUM_PRODUTORES; i++){
-    task_join (&produtores[i]);
-  }
+  // um produtor deve esperar pelo outro
+  task_join (&produtores[0]);
 
   sem_destroy(&s_buffer);
   sem_destroy(&s_vaga);

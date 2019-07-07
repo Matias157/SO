@@ -59,8 +59,8 @@ typedef struct
 
 typedef struct item_t
 {
-   struct queue_t *prev ;  // aponta para o elemento anterior na fila
-   struct queue_t *next ;  // aponta para o elemento seguinte na fila
+   struct item_t *prev ;  // aponta para o elemento anterior na fila
+   struct item_t *next ;  // aponta para o elemento seguinte na fila
    int id;
 } item_t ;
 
