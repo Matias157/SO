@@ -307,11 +307,11 @@ int sem_destroy (semaphore_t *s){
 
 // Inicializa uma barreira
 int barrier_create (barrier_t *b, int N){
-	if(b->status == 1){ //barreira não existe
+	if(b->status == 1){ //barreira já existe
 		return(-1);
 	}
 
-	b->status = 1; //mostra que a barreira foi criada 
+	b->status = 1; 		// indica que a barreira foi criada 
 	b->max_tasks = N; //numero máximo de tasks da barreira
 	b->current_tasks = 0; //contador de tasks na fila da barreira
 	b->queue = NULL; //fila da barreira
@@ -336,25 +336,16 @@ int barrier_join (barrier_t *b){
     }
 
     task_t *elem = b->queue; //pega a fila da barreira
-    while(b->current_tasks > 0){ //percorre a fila da barreira
-        if(elem == &MainTask){ //para garantir que a Main esta no fim da fila (não faz diferença, mas fiz isso pra ficar igual o txt)
-        	elem = elem->next; //se for a Main pegamos a proxima tarefa da fila
-        	while(b->current_tasks > 1){ //vamos colocar todas as tarefas na fila até só sobrar a Main
-	        	task_t *aux = (task_t*)queue_remove((queue_t**)&elem,(queue_t*)elem); //remove a task da fila da barreira
-		        aux->status = Ready; //muda o status da task
-		        b->current_tasks--; //decrementa o contador de tasks da barreira
-		        tasksBar--; //decrementa o contador global de tasks na fila da barreira
-
-		        queue_append((queue_t**)&ReadyQueue,(queue_t*)aux); //coloca a task de volta na fila de prontas
-		    }
-		    task_t *aux = (task_t*)queue_remove((queue_t**)&elem,(queue_t*)&MainTask); //remove a Main da fila, já que garantimos que era a unica task na fila
-	        aux->status = Ready; //muda o status da task
-	        b->current_tasks--; //decrementa o contador de tasks da barreira
-	        tasksBar--; //decrementa o contador global de tasks na fila da barreira
-
-	        queue_append((queue_t**)&ReadyQueue,(queue_t*)aux); //coloca a task de volta na fila de prontas
-        }
+    if(elem == &MainTask){ //para garantir que a Main esta no fim da fila (não faz diferença, mas fiz isso pra ficar igual o txt)
+       	elem = elem->next; //se for a Main pegamos a proxima tarefa da fila
     }
+    while(b->current_tasks > 0){ //vamos colocar todas as tarefas na fila até só sobrar a Main
+    	task_t *aux = (task_t*)queue_remove((queue_t**)&elem,(queue_t*)elem); //remove a task da fila da barreira
+    	aux->status = Ready; //muda o status da task
+    	b->current_tasks--; //decrementa o contador de tasks da barreira
+		tasksBar--; //decrementa o contador global de tasks na fila da barreira
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)aux); //coloca a task de volta na fila de prontas
+	}
     return(0);
 }
 
