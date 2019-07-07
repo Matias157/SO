@@ -1,0 +1,295 @@
+yeld maintask
+tamanho prontas: 1
+tamanho sleep: 0
+tamanho prontas: 1
+tamanho sleep: 0
+    0 ms: Main INICIO
+    0 ms: Main espera Pang...
+tamanho prontas: 5
+tamanho sleep: 0
+tamanho prontas: 5
+tamanho sleep: 0
+    0 ms:     Pang 0 (dorme 3s)
+tamanho prontas: 4
+tamanho sleep: 1
+tamanho prontas: 4
+tamanho sleep: 1
+    0 ms:         Peng 0 (dorme 1s)
+tamanho prontas: 3
+tamanho sleep: 2
+tamanho prontas: 3
+tamanho sleep: 2
+    0 ms:             Ping 0 (dorme 2s)
+tamanho prontas: 2
+tamanho sleep: 3
+tamanho prontas: 2
+tamanho sleep: 3
+    0 ms:                 Pong 0 (dorme 0s)
+tamanho prontas: 1
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 4
+    0 ms:                     Pung 0 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+    0 ms:                 Pong 1 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+    0 ms:                 Pong 2 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 1000 ms:         Peng 1 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 1000 ms:                 Pong 3 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 2000 ms:             Ping 1 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 3000 ms:     Pang 1 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 3000 ms:                     Pung 1 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 3000 ms:         Peng 2 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 3000 ms:             Ping 2 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 3000 ms:         Peng 3 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 5000 ms:                 Pong 4 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 5000 ms:     Pang 2 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 5000 ms:                     Pung 2 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 5000 ms:     Pang 3 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 6000 ms:         Peng 4 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 6000 ms:                 Pong 5 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 6000 ms:                     Pung 3 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 7000 ms:             Ping 3 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 7000 ms:     Pang 4 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 7000 ms:         Peng 5 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 7000 ms:                 Pong 6 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 7000 ms:                 Pong 7 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 9000 ms:                 Pong 8 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 9000 ms:                     Pung 4 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 9000 ms:             Ping 4 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 9000 ms:         Peng 6 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+ 9000 ms:             Ping 5 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+11000 ms:             Ping 6 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+11000 ms:     Pang 5 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+11000 ms:                     Pung 5 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+12000 ms:                 Pong 9 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+13000 ms:             Ping 7 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+13000 ms:         Peng 7 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+14000 ms:         Peng 8 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+14000 ms:     Pang 6 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 5
+tamanho prontas: 1
+tamanho sleep: 4
+14000 ms:                 Pong FIM
+Task 5 exit: execution time 14000 ms, processor time 0 ms, 11 activations
+tamanho prontas: 0
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 3
+15000 ms:                     Pung 6 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 3
+15000 ms:         Peng 9 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 3
+16000 ms:             Ping 8 (dorme 1s)
+tamanho prontas: 0
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 3
+16000 ms:     Pang 7 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 3
+17000 ms:             Ping 9 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 4
+tamanho prontas: 1
+tamanho sleep: 3
+18000 ms:         Peng FIM
+Task 3 exit: execution time 18000 ms, processor time 0 ms, 11 activations
+tamanho prontas: 0
+tamanho sleep: 3
+tamanho prontas: 1
+tamanho sleep: 2
+19000 ms:                     Pung 7 (dorme 2s)
+tamanho prontas: 0
+tamanho sleep: 3
+tamanho prontas: 1
+tamanho sleep: 2
+20000 ms:     Pang 8 (dorme 3s)
+tamanho prontas: 0
+tamanho sleep: 3
+tamanho prontas: 1
+tamanho sleep: 2
+21000 ms:                     Pung 8 (dorme 4s)
+tamanho prontas: 0
+tamanho sleep: 3
+tamanho prontas: 1
+tamanho sleep: 2
+21000 ms:             Ping FIM
+Task 4 exit: execution time 21000 ms, processor time 0 ms, 11 activations
+tamanho prontas: 0
+tamanho sleep: 2
+tamanho prontas: 1
+tamanho sleep: 1
+23000 ms:     Pang 9 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 2
+tamanho prontas: 1
+tamanho sleep: 1
+23000 ms:     Pang FIM
+Task 2 exit: execution time 23000 ms, processor time 0 ms, 11 activations
+tamanho prontas: 1
+tamanho sleep: 1
+tamanho prontas: 1
+tamanho sleep: 1
+23000 ms: Pang acabou
+23000 ms: Main espera Peng...
+tamanho prontas: 0
+tamanho sleep: 1
+tamanho prontas: 1
+tamanho sleep: 0
+25000 ms:                     Pung 9 (dorme 0s)
+tamanho prontas: 0
+tamanho sleep: 1
+tamanho prontas: 1
+tamanho sleep: 0
+25000 ms:                     Pung FIM
+Task 6 exit: execution time 25000 ms, processor time 0 ms, 11 activations
+Task 1 exit: execution time 25000 ms, processor time 25000 ms, 58 activations
+Dispatcher FIM

@@ -16,33 +16,64 @@ struct sigaction action ;
 // estrutura de inicialização to timer
 struct itimerval timer;
 
-int cont = 1;
+struct itimerval pause;
+
+int cont = 1, tasksSem = 0;
 unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks total e o número de ticks inicial de cada tempo de processamento
-task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SuspendQueue;
+task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SuspendQueue, *SleepQueue;
 
 void timer_handler(){ //tratador do timer
-	//printf("entrou no handler\n");
 	ticks++; //incrementa o contador global de ticks
-	if(ticks%20 == 0 && TaskCurrent != &Dispatcher){ //se chegar a 20
-		task_yield(); //retorna a fila de prontas e chama a próxima tarefa
+	printf("tick\n");
+    if(ticks%20 == 0 && TaskCurrent != &Dispatcher){
+        task_yield();
+	}
+}
+
+void timer_on(){
+	if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
+	  perror ("Erro em setitimer: ") ;
+	  exit (1) ;
+	}
+}
+
+void pause_timer()
+{
+	if (setitimer(ITIMER_VIRTUAL, &pause, 0) < 0)
+	{
+      	perror ("Erro em setitimer: ");
+        exit (1);
 	}
 }
 
 task_t *scheduler(){
+	task_t* task_aux = SleepQueue;
+
+	task_aux = SleepQueue;
+	while(queue_size((queue_t*)ReadyQueue) == 0 && queue_size((queue_t*)SleepQueue) > 0){
+		if(task_aux->wakeup <= ticks){
+			task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue, (queue_t*)task_aux);
+			queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
+		}
+		task_aux = task_aux->next;
+	}
+
 	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue)); //retira a primeira tarefa da fila de prontas e a retorna
 }
 
 void dispatcher_body(){
-	while(queue_size((queue_t*) ReadyQueue) > 0){ //verifica se a fila de prontas não esta vazia
-		task_t *next = scheduler(); //cria uma task auxiliar que recebe a primeira tarefa da fila de prontas
-		if(next){ //se next não for NULL
-			task_switch(next); //da o processador para a primeira tarefa da fila
-		}
-	}
+
+    while(queue_size((queue_t*)ReadyQueue) > 0 || queue_size((queue_t*)SleepQueue) > 0 || tasksSem > 0){
+    	timer_on();
+    	task_t* next = scheduler();
+    	if(next){task_switch(next);}
+    }
+    
 	task_exit(0);
 }
 
 void pingpong_init (){
+
 	getcontext(&MainTask.context); //salva o contexto atual na task main
 	MainTask.prev = NULL; //não iniciamos prev
 	MainTask.id = 0; //id da main é 0
@@ -50,6 +81,7 @@ void pingpong_init (){
 	MainTask.status = Ready; //status da main sempre é Running
 	MainTask.parent_id = -1;
 	MainTask.parent_excd = 0;
+	MainTask.wakeup = 0;
 	TaskCurrent = &MainTask; //primeiramente a task atual é a main
 
 	//inicialização do timer análoga aos códigos-exemplo
@@ -63,10 +95,7 @@ void pingpong_init (){
 	// ajusta valores do temporizador
 	timer.it_value.tv_usec = 1000;      // primeiro disparo, em micro-segundos
 	timer.it_interval.tv_usec = 1000;   // disparos subsequentes, em micro-segundos
-	if(setitimer (ITIMER_REAL, &timer, 0) < 0){ //arma o temporizador ITIMER_REAL
-	  perror ("Erro em setitimer: ") ;
-	  exit (1) ;
-	}
+	timer_on();
 	task_create(&Dispatcher, dispatcher_body, ""); //cria o dispatcher
 
 	setvbuf(stdout , 0, _IONBF, 0); //desativa o buffer da saida padrao (stdout), usado pela função printf
@@ -106,6 +135,7 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 	task->status = Ready; //status das tarefas na fila de prontas é Ready
 	task->parent_id = -1;
 	task->parent_excd = 0;
+	task->wakeup = 0;
 
 	task->id = cont; //atualiza os ids das tasks
 	cont++; //incrementa o contador global dos ids
@@ -128,6 +158,7 @@ int task_switch (task_t *task){
 void task_exit (int exitCode){
 	TaskCurrent->execution_time = (systime() - TaskCurrent->execution_time);   // contabiliza o tempo total de execução calculando o intervalo de tempo entre o que foi salvo inicialmente e o atual
 	TaskCurrent->exit_code = exitCode;
+	TaskCurrent->status = Terminated;
 
 	if(SuspendQueue != NULL){
 		task_t *aux = SuspendQueue;
@@ -192,7 +223,7 @@ unsigned int systime (){ //retorna o número de ticks desde o início do program
 }
 
 int task_join (task_t *task){
-	if(task){
+	if(task != NULL && task->status != Terminated){
 		TaskCurrent->parent_id = task->id;
 		task_suspend(NULL, &SuspendQueue); //suspende a task
 		return(TaskCurrent->parent_excd); //retorna o exit code da task que se esperava a conclusao
@@ -200,4 +231,77 @@ int task_join (task_t *task){
 	else{
 		return(-1); //caso a tarefa seja nula retorna -1
 	}
+}
+
+void task_sleep (int t){
+	TaskCurrent->wakeup = t*1000 + ticks;
+	TaskCurrent->status = Suspended;
+	queue_append((queue_t**)&SleepQueue,(queue_t*)TaskCurrent);
+
+	task_switch(&Dispatcher);
+}
+
+// cria um semáforo com valor inicial "value"
+int sem_create (semaphore_t *s, int value){
+	if(s->status == 1){
+		return(-1);		//semáforo já existente
+	}
+	s->value = value;
+	s->status = 1;
+	s->queue = NULL;
+	return(0);
+}
+
+// requisita o semáforo
+int sem_down (semaphore_t *s){
+	if(s->status != 1){
+		return(-1);		//semáforo inexistente ou destruído
+	}
+	//pause_timer();
+	s->value--;
+	if(s->value < 0){
+		tasksSem++;
+		//printf("task_suspend(NULL, &s->queue);\n");
+		queue_append((queue_t**)&(s->queue),(queue_t*)TaskCurrent);; // suspende task atual e a coloca na fila do semáforo
+		//printf("task_switch(&Dispatcher);\n");
+		task_switch(&Dispatcher); //troca para o dispatcher
+		//printf("saiu sem_down\n");
+	}
+	return(0);
+}
+
+// libera o semáforo
+int sem_up (semaphore_t *s){
+	task_t* acorda_task;
+	if(s->status != 1){
+		return(-1);		//semáforo inexistente ou destruído
+	}
+	s->value++;
+	//timer_on();
+	if(s->value <= 0 && s->queue != NULL){
+		tasksSem--;
+		acorda_task = s->queue;	// primeira na fila do semáforo
+		acorda_task = (task_t*)queue_remove((queue_t**)&s->queue,(queue_t*)acorda_task); //remove a tarefa da fila de suspensas
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)acorda_task); //insere a tarefa no final da fila de prontas
+		acorda_task->status = Ready; //status de task volta para Ready
+	}
+	return(0);
+}
+
+// destroi o semáforo, liberando as tarefas bloqueadas
+int sem_destroy (semaphore_t *s){
+	task_t* acorda_task;
+	if(s->status != 1){
+		return(-1);		//semáforo inexistente ou destruído
+	}
+	s->status = 0;
+	while(s->queue != NULL){
+		tasksSem--;
+		acorda_task = s->queue;	// primeira na fila do semáforo
+		acorda_task = (task_t*)queue_remove((queue_t**)&s->queue,(queue_t*)acorda_task); //remove a tarefa da fila de suspensas
+		queue_append((queue_t**)&ReadyQueue,(queue_t*)acorda_task); //insere a tarefa no final da fila de prontas
+		acorda_task->status = Ready; //status de task volta para Ready
+	}
+	s = NULL;
+	return(0);
 }

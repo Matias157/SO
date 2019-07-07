@@ -10,7 +10,7 @@
 #ifndef __DATATYPES__
 #define __DATATYPES__
 
-enum status_t{Ready, Running, Suspended};
+enum status_t{Ready, Running, Suspended, Terminated};
 
 // Estrutura que define uma tarefa
 typedef struct task_t
@@ -25,14 +25,18 @@ typedef struct task_t
 	unsigned int execution_time;
 	unsigned int processor_time;
 	unsigned int activations;
-	int parent_id;
 	int parent_excd;
+	int parent_id;
+	int wakeup;
 } task_t ;
 
 // estrutura que define um semáforo
 typedef struct
 {
-  // preencher quando necessário
+  task_t* queue;
+  int value;
+  int counter;
+  int status;
 } semaphore_t ;
 
 // estrutura que define um mutex

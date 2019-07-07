@@ -7,8 +7,8 @@
 #warning Este codigo foi planejado para ambientes UNIX (LInux, *BSD, MacOS). A compilacao e execucao em outros ambientes e responsabilidade do usuario.
 #endif
 
-#define NUMTASKS 30
-#define NUMSTEPS 10000000
+#define NUMTASKS 10
+#define NUMSTEPS 10000
 
 task_t task[NUMTASKS] ;
 semaphore_t  s ;

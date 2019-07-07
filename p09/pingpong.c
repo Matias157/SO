@@ -18,55 +18,41 @@ struct itimerval timer;
 
 int cont = 1;
 unsigned int ticks = 0, processor_time_init; // inicializa o número de ticks total e o número de ticks inicial de cada tempo de processamento
-task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher;
+task_t MainTask, *TaskCurrent, *TaskOld, *ReadyQueue, Dispatcher, *SuspendQueue, *SleepQueue;
 
 void timer_handler(){ //tratador do timer
 	ticks++; //incrementa o contador global de ticks
-<<<<<<< HEAD
-	if(ticks%20 == 0){ //se chegar a 20
-		//printf("%d\n", ticks); 
-		task_yield(); //retorna a fila de prontas e chama a próxima tarefa
-=======
     if(ticks%20 == 0 && TaskCurrent != &Dispatcher){
         task_yield();
->>>>>>> 04da13135b267e7c8b6887a14465ea4cacbe2f4a
 	}
 }
 
 task_t *scheduler(){
+	task_t* task_aux = SleepQueue;
+
+	task_aux = SleepQueue;
+	while(queue_size((queue_t*)ReadyQueue) == 0 && queue_size((queue_t*)SleepQueue) > 0){
+		if(task_aux->wakeup <= ticks){
+			task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue, (queue_t*)task_aux);
+			queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
+		}
+		task_aux = task_aux->next;
+	}
+
 	return((task_t*)queue_remove((queue_t**)&ReadyQueue, (queue_t*)ReadyQueue)); //retira a primeira tarefa da fila de prontas e a retorna
 }
 
 void dispatcher_body(){
-	task_t* task_aux = SleepQueue;
-
-	if(SleepQueue != NULL){
-		if(task_aux->wakeup <= ticks){
-			task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue,(queue_t*)task_aux);
-			queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
-		}
-		task_aux = task_aux->next;
-		while(task_aux != SleepQueue && SleepQueue != NULL && task_aux != NULL){
-			if(task_aux->wakeup <= ticks){
-				task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue, (queue_t*)task_aux);
-				queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
-			}
-			task_aux = task_aux->next;
-		}
-	}
 
     while(queue_size((queue_t*)ReadyQueue) > 0 || queue_size((queue_t*)SleepQueue) > 0){
-		task_aux = SleepQueue;
-		while(ReadyQueue == NULL && SleepQueue != NULL){
-			if(task_aux->wakeup <= ticks){
-				task_t *aux = (task_t*)queue_remove((queue_t**)&SleepQueue, (queue_t*)task_aux);
-				queue_append((queue_t**)&ReadyQueue,(queue_t*)aux);
-			}
-			task_aux = task_aux->next;
-		}
+    	// printf("tamanho prontas: %d\n", queue_size((queue_t*)ReadyQueue));
+    	// printf("tamanho sleep: %d\n", queue_size((queue_t*)SleepQueue));
+		
+		//printf("tamanho prontas: %d\n", queue_size((queue_t*)ReadyQueue));
+    	//printf("tamanho sleep: %d\n", queue_size((queue_t*)SleepQueue));
 
     	task_t* next = scheduler();
-		task_switch(next);
+    	if(next){task_switch(next);}
     }
     
 	task_exit(0);
@@ -79,8 +65,8 @@ void pingpong_init (){
 	MainTask.id = 0; //id da main é 0
 	MainTask.next = NULL; //não iniciamos next
 	MainTask.status = Ready; //status da main sempre é Running
-	MainTask.suspend_queue = NULL;
-	MainTask.suspend_queue_excd = 0;
+	MainTask.parent_id = -1;
+	MainTask.parent_excd = 0;
 	MainTask.wakeup = 0;
 	TaskCurrent = &MainTask; //primeiramente a task atual é a main
 
@@ -136,8 +122,8 @@ int task_create (task_t *task, void (*start_func)(void *), void *arg){
 	task->processor_time = 0;        // inicia em 0 porque não foi usado tempo de processador para executá-la ainda
 	task->activations = 0;           // mesmo motivo do de cima
 	task->status = Ready; //status das tarefas na fila de prontas é Ready
-	task->suspend_queue = NULL;
-	task->suspend_queue_excd = 0;
+	task->parent_id = -1;
+	task->parent_excd = 0;
 	task->wakeup = 0;
 
 	task->id = cont; //atualiza os ids das tasks
@@ -161,10 +147,21 @@ int task_switch (task_t *task){
 void task_exit (int exitCode){
 	TaskCurrent->execution_time = (systime() - TaskCurrent->execution_time);   // contabiliza o tempo total de execução calculando o intervalo de tempo entre o que foi salvo inicialmente e o atual
 	TaskCurrent->exit_code = exitCode;
+	TaskCurrent->status = Terminated;
 
-	while(TaskCurrent->suspend_queue != NULL) //verifica se a suspend queue da task é nula
-	{
-		task_resume(TaskCurrent); //vai resumindo cada uma das tasks que dependiam da TaskCurrent
+	if(SuspendQueue != NULL){
+		task_t *aux = SuspendQueue;
+		if(aux->parent_id == TaskCurrent->id){
+			task_resume(aux);
+		}
+		aux = aux->next;
+
+		while(aux != SuspendQueue && aux != NULL && SuspendQueue != NULL){
+			if(aux->parent_id == TaskCurrent->id){
+				task_resume(aux);
+			}
+			aux = aux->next;
+		}
 	}
 	printf("Task %d exit: execution time %d ms, processor time %d ms, %d activations\n", TaskCurrent->id, TaskCurrent->execution_time, TaskCurrent->processor_time, TaskCurrent->activations);
 	if(TaskCurrent == &Dispatcher)
@@ -178,6 +175,9 @@ int task_id (){
 }
 
 void task_yield (){
+	if(TaskCurrent->id == MainTask.id){
+		printf("yeld maintask\n");
+	}
 	queue_append((queue_t**)&ReadyQueue,(queue_t*)TaskCurrent); //insere a tarefa no final da fila de prontas
 	TaskCurrent->status = Ready; //status da task atual volta para Ready
 	task_switch(&Dispatcher); //volta para o dispatcher
@@ -204,11 +204,10 @@ void task_suspend (task_t *task, task_t **queue){
 }
 
 void task_resume (task_t *task){
-	task_t *auxtask = (task_t*)queue_remove((queue_t**)&(task->suspend_queue),(queue_t*)(task->suspend_queue)); //remove a tarefa da fila de suspensas
+	task_t *auxtask = (task_t*)queue_remove((queue_t**)&SuspendQueue,(queue_t*)task); //remove a tarefa da fila de suspensas
 	queue_append((queue_t**)&ReadyQueue,(queue_t*)auxtask); //insere a tarefa no final da fila de prontas
 	task->status = Ready; //status de task volta para Ready
-	auxtask->suspend_queue_excd = task->exit_code; //atualiza o exit code da fila de suspensas com a task da tarefa que se esperava a conclusao
-	
+	auxtask->parent_excd = task->exit_code; //atualiza o exit code da fila de suspensas com a task da tarefa que se esperava a conclusao	
 }
 
 unsigned int systime (){ //retorna o número de ticks desde o início do programa
@@ -216,9 +215,10 @@ unsigned int systime (){ //retorna o número de ticks desde o início do program
 }
 
 int task_join (task_t *task){
-	if(task){
-		task_suspend(NULL, &(task->suspend_queue)); //suspende a task
-		return(TaskCurrent->suspend_queue_excd); //retorna o exit code da task que se esperava a conclusao
+	if(task != NULL && task->status != Terminated){
+		TaskCurrent->parent_id = task->id;
+		task_suspend(NULL, &SuspendQueue); //suspende a task
+		return(TaskCurrent->parent_excd); //retorna o exit code da task que se esperava a conclusao
 	}
 	else{
 		return(-1); //caso a tarefa seja nula retorna -1

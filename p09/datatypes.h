@@ -10,12 +10,12 @@
 #ifndef __DATATYPES__
 #define __DATATYPES__
 
-enum status_t{Ready, Running, Suspended};
+enum status_t{Ready, Running, Suspended, Terminated};
 
 // Estrutura que define uma tarefa
 typedef struct task_t
 {
-	struct task_t *prev, *next, *suspend_queue;
+	struct task_t *prev, *next;
 	int id;
 	int exit_code;
 	ucontext_t context;
@@ -25,7 +25,8 @@ typedef struct task_t
 	unsigned int execution_time;
 	unsigned int processor_time;
 	unsigned int activations;
-	int suspend_queue_excd;
+	int parent_excd;
+	int parent_id;
 	int wakeup;
 } task_t ;
 
