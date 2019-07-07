@@ -25,3 +25,17 @@ pingpong.o: pingpong.c queue.h datatypes.h
 
 pingpong-racecond.o: pingpong-racecond.c pingpong.h
 	gcc -o pingpong-racecond.o -c pingpong-racecond.c
+
+all: p10c
+
+p10c: pingpong-prodcons.o pingpong.o queue.o
+	gcc -o p10c pingpong-prodcons.o pingpong.o queue.o
+
+queue.o: queue.c
+	gcc -o queue.o -c queue.c 
+
+pingpong.o: pingpong.c queue.h datatypes.h
+	gcc -o pingpong.o -c pingpong.c 
+
+pingpong-prodcons.o: pingpong-prodcons.c pingpong.h
+	gcc -o pingpong-prodcons.o -c pingpong-prodcons.c

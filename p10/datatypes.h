@@ -57,4 +57,11 @@ typedef struct
   // preencher quando necessário
 } mqueue_t ;
 
+typedef struct item_t
+{
+   struct queue_t *prev ;  // aponta para o elemento anterior na fila
+   struct queue_t *next ;  // aponta para o elemento seguinte na fila
+   int id;
+} item_t ;
+
 #endif
