@@ -128,6 +128,7 @@ int task_switch (task_t *task){
 void task_exit (int exitCode){
 	TaskCurrent->execution_time = (systime() - TaskCurrent->execution_time);   // contabiliza o tempo total de execução calculando o intervalo de tempo entre o que foi salvo inicialmente e o atual
 	TaskCurrent->exit_code = exitCode;
+	TaskCurrent->status = Terminated;
 
 	if(SuspendQueue != NULL){
 		task_t *aux = SuspendQueue;
@@ -184,7 +185,7 @@ void task_resume (task_t *task){
 	task_t *auxtask = (task_t*)queue_remove((queue_t**)&SuspendQueue,(queue_t*)task); //remove a tarefa da fila de suspensas
 	queue_append((queue_t**)&ReadyQueue,(queue_t*)auxtask); //insere a tarefa no final da fila de prontas
 	task->status = Ready; //status de task volta para Ready
-	auxtask->parent_excd = task->exit_code; //atualiza o exit code da fila de suspensas com a task da tarefa que se esperava a conclusao	
+	auxtask->parent_excd = TaskCurrent->exit_code; //atualiza o exit code da fila de suspensas com a task da tarefa que se esperava a conclusao	
 }
 
 unsigned int systime (){ //retorna o número de ticks desde o início do programa
@@ -192,7 +193,7 @@ unsigned int systime (){ //retorna o número de ticks desde o início do program
 }
 
 int task_join (task_t *task){
-	if(task){
+	if(task != NULL && task->status != Terminated){
 		TaskCurrent->parent_id = task->id;
 		task_suspend(NULL, &SuspendQueue); //suspende a task
 		return(TaskCurrent->parent_excd); //retorna o exit code da task que se esperava a conclusao

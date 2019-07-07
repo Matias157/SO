@@ -25,14 +25,18 @@ typedef struct task_t
 	unsigned int execution_time;
 	unsigned int processor_time;
 	unsigned int activations;
-	int parent_id;
 	int parent_excd;
+	int parent_id;
+	int wakeup;
 } task_t ;
 
 // estrutura que define um semáforo
-typedef struct
+typedef struct semaphore_t
 {
-  // preencher quando necessário
+  	task_t* queue;
+  	int value;
+  	int counter;
+  	int status;
 } semaphore_t ;
 
 // estrutura que define um mutex
@@ -42,15 +46,25 @@ typedef struct
 } mutex_t ;
 
 // estrutura que define uma barreira
-typedef struct
+typedef struct barrier_t
 {
-  // preencher quando necessário
+	task_t* queue;
+  	int max_tasks;
+	int current_tasks;
+  	int status;
 } barrier_t ;
 
 // estrutura que define uma fila de mensagens
 typedef struct
 {
-  // preencher quando necessário
+
 } mqueue_t ;
+
+typedef struct item_t
+{
+   struct queue_t *prev ;  // aponta para o elemento anterior na fila
+   struct queue_t *next ;  // aponta para o elemento seguinte na fila
+   int id;
+} item_t ;
 
 #endif
