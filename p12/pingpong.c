@@ -175,8 +175,7 @@ void task_exit (int exitCode){
 		}
 	}
 	printf("Task %d exit: execution time %d ms, processor time %d ms, %d activations\n", TaskCurrent->id, TaskCurrent->execution_time, TaskCurrent->processor_time, TaskCurrent->activations);
-	if(TaskCurrent == &MainTask){
-		printf("Task %d exit: execution time %d ms, processor time %d ms, %d activations\n", Dispatcher.id, MainTask.execution_time, Dispatcher.processor_time, Dispatcher.activations);
+	if(TaskCurrent == &Dispatcher){
 		printf("Dispatcher FIM\n");
 	}
 	else
@@ -384,7 +383,7 @@ int barrier_destroy (barrier_t *b){
 
 // cria uma fila para até max mensagens de size bytes cada
 int mqueue_create (mqueue_t *queue, int max, int size){
-	if(queue == NULL || max <= 0 || size <= 0){ //valores inválidos
+	if(queue->status == 1){ //fila já existe
 		return(-1);
 	}
 
@@ -393,6 +392,7 @@ int mqueue_create (mqueue_t *queue, int max, int size){
 	sem_create(&queue->send, max); //cria o semaforo de envio
 	sem_create(&queue->receive, 0); //cria o semaforo de recebimento
 
+	queue->status = 1; //status de fila existente
 	queue->max_messages = max; //incia a quantidade máxima de mensagens da fila com max
 	queue->messages_size = size; //inicia o tamanho maximo de cada mensagem com size
 	queue->current_messages = 0; //incia o contador de mensagens com 0
@@ -409,8 +409,8 @@ int mqueue_create (mqueue_t *queue, int max, int size){
 
 // envia uma mensagem para a fila
 int mqueue_send (mqueue_t *queue, void *msg){
-	if(queue == NULL || msg == NULL){ //valores inválidos
-		return -1;
+	if(queue->status != 1){ //fila não existe
+		return(-1);
 	}
 
 	sem_down(&queue->send); //coloca o semaforo de envio em down
@@ -431,8 +431,8 @@ int mqueue_send (mqueue_t *queue, void *msg){
 
 // recebe uma mensagem da fila
 int mqueue_recv (mqueue_t *queue, void *msg){
-	if(queue == NULL || msg == NULL){ //valores inválidos
-		return -1;
+	if(queue->status != 1){ //fila não existe
+		return(-1);
 	}
 
 	sem_down(&queue->receive); //coloca o semaforo de recebimento em down
@@ -455,16 +455,14 @@ int mqueue_recv (mqueue_t *queue, void *msg){
 
 // destroi a fila, liberando as tarefas bloqueadas
 int mqueue_destroy (mqueue_t *queue){
-	if(queue == NULL){ //valores inválidos
-		return -1;
+	if(queue->status != 1){ //fila não existe
+		return(-1);
 	}
 
 	sem_destroy(&queue->receive); //destroi o semaforo de recebimento
 	sem_destroy(&queue->send); //destroi o semaforo de envio
 
-	queue = NULL; //destroi a fila
-
-	free(queue); //desaloca a fila
+	queue->status = 0; //status de fila destruida
 
 	return(0);
 }

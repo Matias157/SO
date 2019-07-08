@@ -65,6 +65,7 @@ typedef struct
 	int messages_size;
 	int insert_pos;
 	int remove_pos;
+	int status;
 } mqueue_t ;
 
 typedef struct item_t
